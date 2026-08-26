@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { BedDouble, Bath, Car, Ruler } from "lucide-react";
+import { BedDouble, Bath, Car, Ruler, Heart } from "lucide-react";
 
 export type PropertyCardProps = {
   title: string;
@@ -44,6 +44,14 @@ export function PropertyCard({
         />
         <span className="bg-background-inverse absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-medium text-white">
           {operationLabel}
+        </span>
+        {/* Decorativo — sem estado nem interação, ainda não existe endpoint
+            de favoritos na API (ver design.md, decisão 2). */}
+        <span
+          aria-hidden="true"
+          className="text-text-primary absolute top-3 right-3 flex size-8 items-center justify-center rounded-full bg-white/90"
+        >
+          <Heart className="size-4" />
         </span>
       </div>
 

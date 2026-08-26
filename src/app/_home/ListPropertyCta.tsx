@@ -9,12 +9,17 @@ export function ListPropertyCta() {
           Tem um imóvel para alugar?
         </h2>
         <p className="text-text-secondary">
-          Anuncie com a Chaves e encontre um inquilino com segurança.
+          Anunciamos, cuidamos das visitas e garantimos o pagamento todo mês.
         </p>
       </div>
-      <Button asChild>
-        <Link href="/anunciar">Anunciar meu imóvel</Link>
-      </Button>
+      <div className="flex flex-wrap gap-3">
+        <Button asChild>
+          <Link href="/anunciar">Anunciar imóvel</Link>
+        </Button>
+        <Button variant="outline" asChild>
+          <Link href="/falar-com-alguem">Falar com alguém</Link>
+        </Button>
+      </div>
     </section>
   );
 }

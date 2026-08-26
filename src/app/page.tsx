@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Hero } from "@/app/_home/Hero";
 import { PropertyListing } from "@/components/property/PropertyListing";
 import { CategoryShortcuts } from "@/app/_home/CategoryShortcuts";
@@ -10,9 +11,22 @@ export default function Home() {
       <Hero />
 
       <section className="flex flex-col gap-4 py-8">
-        <h2 className="text-2xl font-semibold text-text-primary">
-          Selecionados para hoje
-        </h2>
+        <div className="flex items-baseline justify-between">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-2xl font-semibold text-text-primary">
+              Selecionados para hoje
+            </h2>
+            <p className="text-text-secondary text-sm">
+              Imóveis com visita disponível nas próximas 48 horas.
+            </p>
+          </div>
+          <Link
+            href="/busca"
+            className="text-text-primary hover:text-brand-primary text-sm font-medium whitespace-nowrap transition-colors"
+          >
+            Ver todos →
+          </Link>
+        </div>
         <PropertyListing limit={4} />
       </section>
 

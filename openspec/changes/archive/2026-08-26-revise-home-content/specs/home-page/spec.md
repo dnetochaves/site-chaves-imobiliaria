@@ -1,10 +1,4 @@
-# home-page Specification
-
-## Purpose
-
-Define o comportamento observável da página Home pública do site — a porta de entrada para busca de imóveis, destaque de imóveis selecionados e os principais CTAs institucionais (condomínios, cadastro de imóvel).
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Home exibe imóveis selecionados
 A Home SHALL exibir uma seção com uma lista de imóveis em destaque, usando a capability de listagem de imóveis, incluindo um subtexto explicativo e um link para a listagem completa.
