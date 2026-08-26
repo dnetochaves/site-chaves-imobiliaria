@@ -1,8 +1,44 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import createClient from "openapi-fetch";
+import type { paths } from "@/lib/api/generated/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useHealthCheck } from "@/lib/api/hooks/use-health-check";
+import { MapView } from "@/components/map/MapView";
+
+function useBrokenHealthCheck() {
+  return useQuery({
+    queryKey: ["health-broken"],
+    retry: false,
+    queryFn: async () => {
+      const brokenClient = createClient<paths>({
+        baseUrl: "http://localhost:1",
+      });
+      const { data, error } = await brokenClient.GET("/health");
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+function QueryStateRow({ label, status, detail }: { label: string; status: string; detail: string }) {
+  return (
+    <div className="border-border-default flex items-center justify-between gap-4 rounded-lg border px-4 py-3">
+      <span className="text-sm font-medium text-text-primary">{label}</span>
+      <span className="text-text-secondary text-sm">
+        {status} — {detail}
+      </span>
+    </div>
+  );
+}
 
 export default function Home() {
+  const health = useHealthCheck();
+  const brokenHealth = useBrokenHealthCheck();
+
   return (
     <div className="flex flex-1 flex-col gap-12 px-8 py-16">
       <section className="flex flex-col gap-4">
@@ -89,6 +125,43 @@ export default function Home() {
           <Label htmlFor="test-disabled">Campo desabilitado</Label>
           <Input id="test-disabled" disabled placeholder="desabilitado" />
         </div>
+      </section>
+
+      <section className="flex max-w-lg flex-col gap-4">
+        <h2 className="text-2xl font-semibold text-text-primary">
+          TanStack Query — GET /health
+        </h2>
+        <div className="flex flex-col gap-2">
+          <QueryStateRow
+            label="Client correto"
+            status={health.status}
+            detail={
+              health.isPending
+                ? "carregando..."
+                : health.isError
+                  ? String(health.error)
+                  : JSON.stringify(health.data)
+            }
+          />
+          <QueryStateRow
+            label="Client com base URL inválida (erro simulado)"
+            status={brokenHealth.status}
+            detail={
+              brokenHealth.isPending
+                ? "carregando..."
+                : brokenHealth.isError
+                  ? String(brokenHealth.error)
+                  : JSON.stringify(brokenHealth.data)
+            }
+          />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-2xl font-semibold text-text-primary">
+          MapLibre (sem provedor de tiles ainda)
+        </h2>
+        <MapView center={[-46.6396, -23.5629]} zoom={12} />
       </section>
     </div>
   );

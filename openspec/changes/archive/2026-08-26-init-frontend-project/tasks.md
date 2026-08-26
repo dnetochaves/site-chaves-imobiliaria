@@ -26,21 +26,21 @@
 
 - [x] 4.1 Instalar `openapi-typescript` e criar o script `api:types` que baixa `https://back-end-chaves-imobiliaria-production.up.railway.app/openapi.json` e gera `src/lib/api/generated/schema.ts`, verificando que o script roda e produz o arquivo
 - [x] 4.2 Rodar `api:types` uma vez e commitar o resultado, verificando que os tipos incluem os schemas `ImovelDetail`, `ImovelSubmissionCreate`, `LeadCreate` e `TokenPair`
-- [ ] 4.3 Criar o wrapper de fetch tipado em `src/lib/api/client.ts` usando `NEXT_PUBLIC_API_BASE_URL` como base URL, e verificar com um teste manual (ex.: chamar `GET /health`) que retorna 200
-- [ ] 4.4 Documentar `NEXT_PUBLIC_API_BASE_URL` em `.env.example` apontando para a URL de produção, e verificar que o app lê a variável corretamente em dev
+- [x] 4.3 Criar o wrapper de fetch tipado em `src/lib/api/client.ts` usando `NEXT_PUBLIC_API_BASE_URL` como base URL, e verificar com um teste manual (ex.: chamar `GET /health`) que retorna 200 (bloqueado inicialmente por CORS no backend — resolvido, ver conversa; confirmado 200 do browser após ALLOWED_ORIGINS incluir localhost:3000)
+- [x] 4.4 Documentar `NEXT_PUBLIC_API_BASE_URL` em `.env.example` apontando para a URL de produção, e verificar que o app lê a variável corretamente em dev
 
 ## 5. TanStack Query
 
-- [ ] 5.1 Instalar TanStack Query e configurar o `QueryClientProvider` na raiz da aplicação, verificando via devtools que o client está ativo
-- [ ] 5.2 Criar um hook de exemplo `useHealthCheck` (`GET /health`) em `src/lib/api/hooks/` usando o client do grupo 4, e verificar em uma página de teste que os estados de loading, sucesso e erro são todos observáveis (ex.: forçando uma URL base inválida para simular erro)
+- [x] 5.1 Instalar TanStack Query e configurar o `QueryClientProvider` na raiz da aplicação, verificando via devtools que o client está ativo
+- [x] 5.2 Criar um hook de exemplo `useHealthCheck` (`GET /health`) em `src/lib/api/hooks/` usando o client do grupo 4, e verificar em uma página de teste que os estados de loading, sucesso e erro são todos observáveis (ex.: forçando uma URL base inválida para simular erro) — confirmado: sucesso retorna o JSON real da API, erro mostra "TypeError: Failed to fetch" para client com base URL inválida
 
 ## 6. MapLibre GL (base)
 
-- [ ] 6.1 Instalar `maplibre-gl` e criar `src/components/map/MapView.tsx` aceitando props `center`, `zoom`, `markers`, sem estilo de tiles definido, e verificar que o componente renderiza um container sem erros de console
-- [ ] 6.2 Registrar como decisão em aberto (comentário no componente ou issue) que o provedor de tiles será escolhido no change que implementar a tela de Busca
+- [x] 6.1 Instalar `maplibre-gl` e criar `src/components/map/MapView.tsx` aceitando props `center`, `zoom`, `markers`, sem estilo de tiles definido, e verificar que o componente renderiza um container sem erros de console (import default incorreto do maplibre-gl corrigido para named imports)
+- [x] 6.2 Registrar como decisão em aberto (comentário no componente ou issue) que o provedor de tiles será escolhido no change que implementar a tela de Busca
 
 ## 7. Verificação final
 
-- [ ] 7.1 Rodar `npm run lint`, `npm run build` e `npm run dev` em sequência e verificar que todos completam sem erro
-- [ ] 7.2 Revisar `src/styles/tokens.css` e `src/styles/tokens.ts` lado a lado com `design_system/Tokens.pdf` e `design_system/Conceito-de-marca.pdf` linha a linha, corrigindo qualquer divergência encontrada
-- [ ] 7.3 Atualizar o `README.md` do projeto com os comandos disponíveis (`dev`, `build`, `lint`, `format`, `api:types`) e a estrutura de pastas definida no grupo 1
+- [x] 7.1 Rodar `npm run lint`, `npm run build` e `npm run dev` em sequência e verificar que todos completam sem erro
+- [x] 7.2 Revisar `src/styles/tokens.css` e `src/styles/tokens.ts` lado a lado com `design_system/Tokens.pdf` e `design_system/Conceito-de-marca.pdf` linha a linha, corrigindo qualquer divergência encontrada — todos os valores conferem exatamente (cores, spacing, radius, motion, breakpoints, z-index, escala tipográfica); shadow permanece sem valor-fonte no PDF, já documentado como estimativa
+- [x] 7.3 Atualizar o `README.md` do projeto com os comandos disponíveis (`dev`, `build`, `lint`, `format`, `api:types`) e a estrutura de pastas definida no grupo 1
