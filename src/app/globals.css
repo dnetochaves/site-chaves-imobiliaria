@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/*
+ * Variáveis semânticas do shadcn/ui (usadas pelos componentes gerados em
+ * src/components/ui, ex.: bg-primary, border-border, ring-ring) remapeadas
+ * para os tokens de marca do Design System em vez dos neutros padrão do
+ * preset. Não há paleta dark definida no Design System, então o modo
+ * escuro do shadcn foi removido (ver design.md - Non-Goals).
+ */
+:root {
+  --background: var(--color-background-default);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-background-default);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-background-default);
+  --popover-foreground: var(--color-text-primary);
+  --primary: var(--color-brand-primary);
+  --primary-foreground: var(--color-cal-0);
+  --secondary: var(--color-brand-secondary);
+  --secondary-foreground: var(--color-cal-0);
+  --muted: var(--color-background-muted);
+  --muted-foreground: var(--color-text-muted);
+  --accent: var(--color-brand-primary-subtle);
+  --accent-foreground: var(--color-brand-primary);
+  --destructive: var(--color-feedback-error);
+  --destructive-foreground: var(--color-cal-0);
+  --border: var(--color-border-default);
+  --input: var(--color-border-default);
+  --ring: var(--color-border-focus);
+}
+
+/*
+ * `--font-plus-jakarta-sans` / `--font-ibm-plex-mono` vêm do `next/font`
+ * (ver src/app/layout.tsx), então só existem em runtime — por isso essa
+ * ligação usa `@theme inline` (referencia o valor de fora em vez de
+ * duplicá-lo), diferente dos tokens estáticos que já entram direto via
+ * `@theme` em src/styles/tokens.css.
+ */
+@theme inline {
+  --font-sans: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

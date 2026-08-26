@@ -1,0 +1,159 @@
+/**
+ * Design tokens — fonte única de verdade.
+ * Extraídos de design_system/Conceito-de-marca.pdf (Ciclo 01) e
+ * design_system/Tokens.pdf (Ciclo 02). Ver src/styles/README.md.
+ * Qualquer alteração aqui deve ser espelhada em src/styles/tokens.ts.
+ *
+ * Tokens com namespace reconhecido pelo Tailwind v4 (cor, radius, shadow,
+ * breakpoint, tamanho de texto) ficam dentro de `@theme`: o Tailwind gera
+ * as utilities automaticamente (bg-petroleo-700, rounded-lg, text-xl...) e
+ * também expõe cada um como CSS custom property em tempo de execução.
+ *
+ * Motion e z-index não têm namespace de tema no Tailwind v4 — ficam como
+ * custom properties simples em :root, usadas via valor arbitrário
+ * (ex.: `duration-[var(--motion-fast)]`, `z-[var(--z-modal)]`).
+ */
+
+@theme {
+  /* Cor de marca — Petróleo */
+  --color-petroleo-50: #edf4f5;
+  --color-petroleo-100: #d6e6e8;
+  --color-petroleo-200: #b4d2d6;
+  --color-petroleo-300: #8fb9be;
+  --color-petroleo-500: #2e7a85;
+  --color-petroleo-600: #1b5d68;
+  --color-petroleo-700: #0d4650;
+  --color-petroleo-900: #072e35;
+
+  /* Cor de marca — Areia */
+  --color-areia-50: #fbf2e7;
+  --color-areia-100: #f5e2cb;
+  --color-areia-200: #edd0a9;
+  --color-areia-300: #e7be8c;
+  --color-areia-500: #d2954f;
+  --color-areia-600: #b87c3c;
+  --color-areia-700: #94612c;
+  --color-areia-900: #5e3d18;
+
+  /* Neutros — Cal */
+  --color-cal-0: #ffffff;
+  --color-cal-50: #f8f7f4;
+  --color-cal-100: #efede8;
+  --color-cal-200: #e1ded7;
+  --color-cal-300: #c8c4bb;
+  --color-cal-400: #8b8f8c;
+  --color-cal-700: #4b5f63;
+  --color-cal-900: #12262a;
+
+  /* Tokens semânticos — marca */
+  --color-brand-primary: var(--color-petroleo-700);
+  --color-brand-primary-hover: #0a3a43;
+  --color-brand-primary-active: var(--color-petroleo-900);
+  --color-brand-primary-subtle: var(--color-petroleo-50);
+  --color-brand-secondary: var(--color-areia-500);
+  --color-brand-secondary-hover: var(--color-areia-600);
+  --color-brand-secondary-active: var(--color-areia-700);
+  --color-brand-secondary-subtle: var(--color-areia-50);
+
+  /* Tokens semânticos — background */
+  --color-background-default: var(--color-cal-0);
+  --color-background-subtle: var(--color-cal-50);
+  --color-background-muted: var(--color-cal-100);
+  --color-background-inverse: var(--color-petroleo-900);
+
+  /* Tokens semânticos — texto e borda */
+  --color-text-primary: #12262a; /* contraste 14.4:1 sobre background.default */
+  --color-text-secondary: #4b5f63; /* contraste 7.1:1 */
+  --color-text-muted: #6e7a7c; /* contraste 4.7:1 */
+  --color-text-disabled: #a8a59c; /* contraste 2.3:1 */
+  --color-border-subtle: var(--color-cal-100);
+  --color-border-default: var(--color-cal-200);
+  --color-border-strong: var(--color-cal-300);
+  --color-border-focus: var(--color-petroleo-500); /* anel de foco, 3px */
+
+  /* Feedback */
+  --color-feedback-success: #1e7a5f;
+  --color-feedback-success-subtle: #e8f3ef;
+  --color-feedback-warning: #b5771a;
+  --color-feedback-warning-subtle: #fbf2e2;
+  --color-feedback-error: #b23a32;
+  --color-feedback-error-subtle: #faeceb;
+  --color-feedback-info: #2a6b8f;
+  --color-feedback-info-subtle: #eaf2f7;
+
+  /* Escala tipográfica (tamanho / altura de linha / tracking) */
+  --text-xs: 12px;
+  --text-xs--line-height: 17px;
+  --text-xs--letter-spacing: 0.01em;
+  --text-sm: 14px;
+  --text-sm--line-height: 21px;
+  --text-md: 16px;
+  --text-md--line-height: 26px;
+  --text-lg: 18px;
+  --text-lg--line-height: 28px;
+  --text-xl: 20px;
+  --text-xl--line-height: 27px;
+  --text-xl--letter-spacing: -0.015em;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 30px;
+  --text-2xl--letter-spacing: -0.02em;
+  --text-3xl: 32px;
+  --text-3xl--line-height: 37px;
+  --text-3xl--letter-spacing: -0.03em;
+  --text-4xl: 40px;
+  --text-4xl--line-height: 44px;
+  --text-4xl--letter-spacing: -0.035em;
+  --text-5xl: 52px;
+  --text-5xl--line-height: 55px;
+  --text-5xl--letter-spacing: -0.04em;
+  --text-6xl: 64px;
+  --text-6xl--line-height: 65px;
+  --text-6xl--letter-spacing: -0.045em;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-full: 9999px;
+
+  /* Shadow — o PDF só especifica os rótulos (sm/md/lg/xl) sem valores
+     numéricos de blur/opacidade extraíveis como texto; valores abaixo são
+     uma progressão razoável usando a cor de texto primária como base e
+     PRECISAM ser conferidos visualmente contra design_system/Tokens.pdf
+     (ver task 7.2). */
+  --shadow-sm: 0 1px 2px 0 rgb(18 38 42 / 0.06);
+  --shadow-md: 0 4px 8px -2px rgb(18 38 42 / 0.1);
+  --shadow-lg: 0 12px 20px -4px rgb(18 38 42 / 0.12);
+  --shadow-xl: 0 24px 40px -8px rgb(18 38 42 / 0.16);
+
+  /* Easing (duração fica em :root — Tailwind v4 não tem namespace de tema
+     para duração nomeada) */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Breakpoints */
+  --breakpoint-sm: 375px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
+}
+
+:root {
+  /* Motion — durações (sem namespace de tema no Tailwind v4) */
+  --motion-instant: 80ms;
+  --motion-fast: 140ms;
+  --motion-base: 200ms;
+  --motion-slow: 320ms;
+
+  /* Z-index (sem namespace de tema no Tailwind v4) */
+  --z-base: 0;
+  --z-sticky: 100;
+  --z-dropdown: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+}
