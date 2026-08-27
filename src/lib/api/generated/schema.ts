@@ -951,11 +951,11 @@ export interface components {
         };
         /**
          * UnidadeDisponibilidadeProxima
-         * @description A unit with a published listing and a near-term available slot,
-         *     for the Home page's "Selecionados para hoje" section.
+         * @description A published listing with a near-term available slot, for the Home
+         *     page's "Selecionados para hoje" section.
          */
         UnidadeDisponibilidadeProxima: {
-            unidade: components["schemas"]["UnidadeRead"];
+            imovel: components["schemas"]["ImovelSummary"];
             /**
              * Proxima Visita Em
              * Format: date-time

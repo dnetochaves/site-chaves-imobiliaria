@@ -16,6 +16,7 @@ export type PropertyCardProps = {
   furnished?: boolean;
   petsAllowed?: boolean;
   imageUrl?: string;
+  nextVisitLabel?: string;
 };
 
 export function PropertyCard({
@@ -32,6 +33,7 @@ export function PropertyCard({
   furnished = false,
   petsAllowed = false,
   imageUrl,
+  nextVisitLabel,
 }: PropertyCardProps) {
   return (
     <Link
@@ -64,6 +66,12 @@ export function PropertyCard({
           {neighborhood} · {city}
         </p>
         <h3 className="text-text-primary text-lg font-semibold">{title}</h3>
+
+        {nextVisitLabel && (
+          <span className="bg-brand-secondary-subtle text-brand-secondary w-fit rounded-full px-2.5 py-0.5 text-xs font-medium">
+            {nextVisitLabel}
+          </span>
+        )}
 
         <div className="text-text-secondary flex items-center gap-4 text-sm">
           <span className="flex items-center gap-1">

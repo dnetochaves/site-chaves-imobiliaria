@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Hero } from "@/app/_home/Hero";
-import { PropertyListing } from "@/components/property/PropertyListing";
+import { SelecionadosParaHoje } from "@/app/_home/SelecionadosParaHoje";
 import { CategoryShortcuts } from "@/app/_home/CategoryShortcuts";
 import { CondoBanner } from "@/app/_home/CondoBanner";
 import { ListPropertyCta } from "@/app/_home/ListPropertyCta";
@@ -27,7 +27,7 @@ export default function Home() {
             Ver todos →
           </Link>
         </div>
-        <PropertyListing limit={4} />
+        <SelecionadosParaHoje />
       </section>
 
       <CategoryShortcuts />
