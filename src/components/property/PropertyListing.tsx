@@ -1,32 +1,8 @@
 "use client";
 
 import { useImoveis } from "@/lib/api/hooks/use-imoveis";
-import { formatArea, formatPrice } from "@/lib/format";
-import { PropertyCard, type PropertyCardProps } from "@/components/property/PropertyCard";
-import type { components } from "@/lib/api/generated/schema";
-
-type ImovelSummary = components["schemas"]["ImovelSummary"];
-
-function toPropertyCardProps(imovel: ImovelSummary): PropertyCardProps {
-  const operationLabel = imovel.disponivel_aluguel ? "Aluguel" : "Venda";
-  const priceValue = imovel.disponivel_aluguel
-    ? imovel.valor_aluguel
-    : imovel.valor_venda;
-
-  return {
-    title: imovel.titulo,
-    neighborhood: imovel.unidade.bairro,
-    city: imovel.unidade.cidade,
-    areaLabel: formatArea(imovel.unidade.area_util_m2),
-    bedrooms: imovel.unidade.quartos,
-    bathrooms: imovel.unidade.banheiros,
-    parkingSpots: imovel.unidade.vagas_garagem,
-    priceLabel: priceValue ? formatPrice(priceValue) : "Sob consulta",
-    operationLabel,
-    furnished: imovel.mobiliado,
-    petsAllowed: imovel.aceita_pets,
-  };
-}
+import { PropertyCard } from "@/components/property/PropertyCard";
+import { toPropertyDisplayData } from "@/components/property/mapImovel";
 
 export type PropertyListingProps = {
   limit?: number;
@@ -72,7 +48,7 @@ export function PropertyListing({ limit = 4, bairro }: PropertyListingProps) {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       {data.items.map((imovel) => (
-        <PropertyCard key={imovel.id} {...toPropertyCardProps(imovel)} />
+        <PropertyCard key={imovel.id} {...toPropertyDisplayData(imovel)} />
       ))}
     </div>
   );

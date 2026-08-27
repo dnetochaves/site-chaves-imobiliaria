@@ -2,24 +2,22 @@
 
 import { useEffect, useRef } from "react";
 import { Map as MaplibreMap, Marker } from "maplibre-gl";
-import type { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 /**
- * Wrapper base do MapLibre GL. Sem provedor de tiles/estilo definido ainda
- * — usa um estilo vazio (sem sources/layers) só para o mapa renderizar.
- * A escolha do provedor de tiles fica para o change que implementar a
- * tela de Busca (ver design.md - Non-Goals e src/components/map/README.md).
+ * Provedor de tiles: OpenFreeMap (gratuito, sem chave de API). Ver
+ * design.md do change add-search-page, decisão 8. Trocar aqui se o volume
+ * de tráfego justificar migrar para outro provedor no futuro.
  */
-const EMPTY_STYLE: StyleSpecification = {
-  version: 8,
-  sources: {},
-  layers: [],
-};
+const DEFAULT_MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 
 export type MapMarker = {
   id: string | number;
   center: [number, number];
+  /** Rótulo exibido no marcador (ex.: preço formatado, "3,4 mil"). Sem label, usa o marcador padrão do MapLibre. */
+  label?: string;
+  /** Estado visual de destaque (ex.: hover no item de lista correspondente). */
+  highlighted?: boolean;
 };
 
 export type MapViewProps = {
@@ -27,9 +25,31 @@ export type MapViewProps = {
   zoom: number;
   markers?: MapMarker[];
   className?: string;
+  mapStyle?: string;
+  /** Ajusta automaticamente os limites do mapa para caber todos os marcadores. */
+  fitToMarkers?: boolean;
 };
 
-export function MapView({ center, zoom, markers = [], className }: MapViewProps) {
+function createMarkerElement(marker: MapMarker): HTMLElement {
+  const el = document.createElement("div");
+  el.className = [
+    "flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold shadow-md whitespace-nowrap cursor-pointer transition-colors",
+    marker.highlighted
+      ? "bg-brand-primary text-white"
+      : "bg-background-default text-text-primary",
+  ].join(" ");
+  el.textContent = marker.label ?? "";
+  return el;
+}
+
+export function MapView({
+  center,
+  zoom,
+  markers = [],
+  className,
+  mapStyle = DEFAULT_MAP_STYLE,
+  fitToMarkers = false,
+}: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MaplibreMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
@@ -39,7 +59,7 @@ export function MapView({ center, zoom, markers = [], className }: MapViewProps)
 
     const map = new MaplibreMap({
       container: containerRef.current,
-      style: EMPTY_STYLE,
+      style: mapStyle,
       center,
       zoom,
     });
@@ -66,14 +86,34 @@ export function MapView({ center, zoom, markers = [], className }: MapViewProps)
 
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current = markers.map((marker) =>
-      new Marker().setLngLat(marker.center).addTo(map),
+      marker.label
+        ? new Marker({ element: createMarkerElement(marker) })
+            .setLngLat(marker.center)
+            .addTo(map)
+        : new Marker().setLngLat(marker.center).addTo(map),
     );
+
+    if (fitToMarkers && markers.length > 0) {
+      if (markers.length === 1) {
+        map.setCenter(markers[0].center);
+      } else {
+        const lngs = markers.map((m) => m.center[0]);
+        const lats = markers.map((m) => m.center[1]);
+        map.fitBounds(
+          [
+            [Math.min(...lngs), Math.min(...lats)],
+            [Math.max(...lngs), Math.max(...lats)],
+          ],
+          { padding: 48, maxZoom: 15, duration: 0 },
+        );
+      }
+    }
 
     return () => {
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = [];
     };
-  }, [markers]);
+  }, [markers, fitToMarkers]);
 
   return (
     <div
