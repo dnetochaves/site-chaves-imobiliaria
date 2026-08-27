@@ -36,6 +36,12 @@ export function Header() {
         <div className="flex items-center gap-3">
           {status === "authenticated" ? (
             <>
+              <Link
+                href="/favoritos"
+                className="text-text-secondary hover:text-text-primary hidden text-sm font-medium transition-colors md:inline"
+              >
+                Favoritos
+              </Link>
               <span className="text-text-secondary hidden text-sm font-medium md:inline">
                 Olá, {user?.name ?? user?.email}
               </span>
