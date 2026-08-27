@@ -9,7 +9,8 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "api:types": "openapi-typescript https://back-end-chaves-imobiliaria-production.up.railway.app/openapi.json -o src/lib/api/generated/schema.ts"
+    "api:types": "openapi-typescript https://back-end-chaves-imobiliaria-production.up.railway.app/openapi.json -o src/lib/api/generated/schema.ts",
+    "postinstall": "node scripts/copy-maplibre-worker.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.102.5",

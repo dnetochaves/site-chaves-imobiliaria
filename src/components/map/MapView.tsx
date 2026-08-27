@@ -1,15 +1,28 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Map as MaplibreMap, Marker } from "maplibre-gl";
+import { Map as MaplibreMap, Marker, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 /**
- * Provedor de tiles: OpenFreeMap (gratuito, sem chave de API). Ver
- * design.md do change add-search-page, decisão 8. Trocar aqui se o volume
- * de tráfego justificar migrar para outro provedor no futuro.
+ * Provedor de tiles: CARTO, estilo Voyager (gratuito, sem chave de API). Ver
+ * design.md do change add-search-page, decisão 8, e o change
+ * switch-map-tile-provider — trocado do OpenFreeMap porque a fonte de
+ * tiles vetoriais deles passou a servir tiles vazios globalmente.
  */
-const DEFAULT_MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
+const DEFAULT_MAP_STYLE = "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json";
+
+/**
+ * O Turbopack não resolve a URL do worker do MapLibre corretamente (resolve
+ * pra uma string vazia, o que faz o worker tentar carregar o HTML da própria
+ * página como se fosse o script dele — quebra o parsing de tiles vetoriais
+ * em silêncio, sem nenhum evento de erro do mapa). `maplibre-gl-worker.mjs`
+ * e seu chunk `maplibre-gl-shared.mjs` são copiados pra `public/` pelo
+ * script `scripts/copy-maplibre-worker.mjs` (roda no `postinstall`), e
+ * servidos daí como um caminho estático fixo, contornando a resolução
+ * automática do bundler.
+ */
+setWorkerUrl("/maplibre-gl-worker.mjs");
 
 export type MapMarker = {
   id: string | number;
