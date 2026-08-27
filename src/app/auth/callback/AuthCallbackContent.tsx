@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { exchangeCode, fetchCurrentUser } from "@/lib/auth/api";
+import { exchangeCode } from "@/lib/auth/api";
 
 export function AuthCallbackContent() {
   const router = useRouter();
@@ -23,13 +23,10 @@ export function AuthCallbackContent() {
     async function completeExchange(code: string) {
       try {
         const tokenPair = await exchangeCode(code);
-        completeLogin(
-          {
-            accessToken: tokenPair.access_token,
-            refreshToken: tokenPair.refresh_token,
-          },
-          await fetchCurrentUser(),
-        );
+        await completeLogin({
+          accessToken: tokenPair.access_token,
+          refreshToken: tokenPair.refresh_token,
+        });
         router.replace("/");
       } catch {
         setError("Não foi possível concluir o login. O código pode ter expirado.");
