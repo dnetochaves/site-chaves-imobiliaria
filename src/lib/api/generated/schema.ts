@@ -50,11 +50,38 @@ export interface paths {
         };
         /**
          * Callback
-         * @description Exchanges the provider's authorization code for the app's own JWT tokens.
+         * @description Lands here as a top-level browser navigation (the provider redirects
+         *     the browser, not a frontend fetch call) - so it can't just return
+         *     `TokenPair` as JSON, the browser would render it as a page instead of
+         *     handing it to any frontend code. Instead it redirects to the frontend
+         *     with a one-time `code`, which the frontend then POSTs to `/auth/exchange`
+         *     from its own JS to get the real tokens back as an ordinary fetch response.
          */
         get: operations["callback_auth__provider__callback_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Exchange
+         * @description Called by the frontend right after `/{provider}/callback` redirects
+         *     it there with `?code=...` - trades that one-time code for the actual
+         *     access/refresh tokens.
+         */
+        post: operations["exchange_auth_exchange_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -608,6 +635,11 @@ export interface components {
             /** Sindico Id */
             sindico_id: number | null;
         };
+        /** ExchangeCodeRequest */
+        ExchangeCodeRequest: {
+            /** Code */
+            code: string;
+        };
         /** FavoritoRead */
         FavoritoRead: {
             /** Id */
@@ -1098,6 +1130,39 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    exchange_auth_exchange_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExchangeCodeRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

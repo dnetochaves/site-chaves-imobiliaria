@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shell/Logo";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 const navLinks = [
   { label: "Alugar", href: "/alugar" },
@@ -10,6 +13,8 @@ const navLinks = [
 ];
 
 export function Header() {
+  const { user, status, login, logout } = useAuth();
+
   return (
     <header className="border-border-default bg-background-default border-b">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
@@ -29,15 +34,20 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/entrar"
-            className="text-text-secondary hover:text-text-primary hidden text-sm font-medium transition-colors md:inline"
-          >
-            Entrar
-          </Link>
-          <Button asChild size="sm">
-            <Link href="/criar-conta">Criar conta</Link>
-          </Button>
+          {status === "authenticated" ? (
+            <>
+              <span className="text-text-secondary hidden text-sm font-medium md:inline">
+                Olá, {user?.name ?? user?.email}
+              </span>
+              <Button size="sm" variant="outline" onClick={logout}>
+                Sair
+              </Button>
+            </>
+          ) : (
+            <Button size="sm" onClick={login}>
+              Entrar
+            </Button>
+          )}
         </div>
       </div>
     </header>

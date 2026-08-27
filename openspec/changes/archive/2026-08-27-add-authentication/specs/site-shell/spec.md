@@ -1,10 +1,4 @@
-# site-shell Specification
-
-## Purpose
-
-Garante que toda página pública do site tenha um header de navegação e um footer institucional consistentes, para que o usuário sempre tenha acesso à navegação principal e às informações de identificação da empresa, independente de qual página está vendo.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Header presente em toda página
 Toda página pública do site SHALL exibir um header no topo contendo a logo da marca, os links de navegação principal (Alugar, Comprar, Anunciar, Ajuda) e uma ação de conta que reflete o estado de autenticação: um CTA de login quando o usuário não está autenticado, ou o nome do usuário e uma ação de sair quando está autenticado.
@@ -35,14 +29,3 @@ Cada item de navegação do header (Alugar, Comprar, Anunciar, Ajuda) SHALL ser 
 #### Scenario: Clicar em sair
 - **WHEN** um usuário autenticado clica na ação de sair
 - **THEN** a sessão é encerrada e o header volta a exibir o CTA de login
-
-### Requirement: Footer presente em toda página
-Toda página pública do site SHALL exibir um footer contendo a logo da marca, a identificação da empresa (CRECI e CNPJ) e links organizados em colunas temáticas (Buscar, Proprietários, Chaves).
-
-#### Scenario: Footer visível na Home
-- **WHEN** um usuário acessa a rota `/` e rola até o final da página
-- **THEN** o footer aparece com a logo, a identificação da empresa e as 3 colunas de links
-
-#### Scenario: Links do footer são clicáveis
-- **WHEN** um usuário clica em um link de qualquer coluna do footer
-- **THEN** o navegador tenta navegar para a URL associada àquele link
