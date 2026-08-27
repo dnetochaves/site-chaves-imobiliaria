@@ -1,7 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 import { BedDouble, Bath, Car, Ruler, Heart } from "lucide-react";
 
 export type PropertyCardProps = {
+  id: number;
   title: string;
   neighborhood: string;
   city: string;
@@ -17,6 +19,7 @@ export type PropertyCardProps = {
 };
 
 export function PropertyCard({
+  id,
   title,
   neighborhood,
   city,
@@ -31,7 +34,8 @@ export function PropertyCard({
   imageUrl,
 }: PropertyCardProps) {
   return (
-    <article
+    <Link
+      href={`/imoveis/${id}`}
       data-slot="property-card"
       className="border-border-default bg-background-default flex flex-col overflow-hidden rounded-xl border shadow-sm"
     >
@@ -104,6 +108,6 @@ export function PropertyCard({
           )}
         </p>
       </div>
-    </article>
+    </Link>
   );
 }

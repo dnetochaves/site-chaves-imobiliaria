@@ -105,13 +105,12 @@ export function SearchResultsList({ onHoverItem }: SearchResultsListProps) {
             {data.items.map((imovel) => {
               const item = toPropertyDisplayData(imovel);
               return (
-                <a key={item.id} href={`/imoveis/${item.id}`}>
-                  <PropertyListItem
-                    {...item}
-                    onMouseEnter={() => onHoverItem?.(item.id)}
-                    onMouseLeave={() => onHoverItem?.(null)}
-                  />
-                </a>
+                <PropertyListItem
+                  key={item.id}
+                  {...item}
+                  onMouseEnter={() => onHoverItem?.(item.id)}
+                  onMouseLeave={() => onHoverItem?.(null)}
+                />
               );
             })}
           </div>

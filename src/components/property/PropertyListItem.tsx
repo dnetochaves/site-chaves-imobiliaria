@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Heart } from "lucide-react";
 import type { PropertyDisplayData } from "@/components/property/mapImovel";
 
@@ -9,6 +10,7 @@ export type PropertyListItemProps = PropertyDisplayData & {
 };
 
 export function PropertyListItem({
+  id,
   title,
   neighborhood,
   areaLabel,
@@ -23,7 +25,8 @@ export function PropertyListItem({
   onMouseLeave,
 }: PropertyListItemProps) {
   return (
-    <article
+    <Link
+      href={`/imoveis/${id}`}
       data-slot="property-list-item"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -83,6 +86,6 @@ export function PropertyListItem({
           </span>
         </p>
       </div>
-    </article>
+    </Link>
   );
 }

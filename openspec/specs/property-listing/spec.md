@@ -45,3 +45,10 @@ O sistema SHALL prover um formato de card de imóvel em layout horizontal compac
 #### Scenario: Card de lista exibe dados essenciais
 - **WHEN** um imóvel é exibido no formato de card de lista horizontal
 - **THEN** o card exibe localização, título, preço, metragem, quartos e tipo de operação, no layout horizontal (thumbnail à esquerda, dados à direita)
+
+### Requirement: Card de imóvel navega para o detalhe do imóvel
+Todo card de imóvel (em grade ou em lista) SHALL ser um elemento navegável que leva à página de detalhe do imóvel correspondente.
+
+#### Scenario: Clicar em um card de imóvel
+- **WHEN** um usuário clica em um card de imóvel, em qualquer listagem (grade ou lista)
+- **THEN** o navegador leva à página de detalhe daquele imóvel

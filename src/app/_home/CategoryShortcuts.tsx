@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { Home, Users, PawPrint, Building2 } from "lucide-react";
+import { buildWhatsappHref } from "@/lib/whatsapp";
 
-// TODO: substituir pelo número real de WhatsApp da Chaves antes de produção.
-const WHATSAPP_PLACEHOLDER_NUMBER = "5511999999999";
-const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_PLACEHOLDER_NUMBER}?text=${encodeURIComponent(
+const WHATSAPP_HREF = buildWhatsappHref(
   "Quero uma simulação para o meu primeiro imóvel",
-)}`;
+);
 
 type Shortcut = {
   label: string;
