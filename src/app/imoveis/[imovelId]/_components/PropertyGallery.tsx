@@ -51,6 +51,7 @@ export function PropertyGallery({ fotos, title }: PropertyGalleryProps) {
             fill
             className="object-cover"
             priority
+            unoptimized
           />
         </button>
 
@@ -67,6 +68,7 @@ export function PropertyGallery({ fotos, title }: PropertyGalleryProps) {
                 alt={title}
                 fill
                 className="object-cover"
+                unoptimized
               />
               {i === visibleThumbnails.length - 1 && ordered.length > 5 && (
                 <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-sm font-semibold text-white">
@@ -101,6 +103,7 @@ export function PropertyGallery({ fotos, title }: PropertyGalleryProps) {
                 alt={title}
                 fill
                 className="object-contain bg-black"
+                unoptimized
               />
               {ordered.length > 1 && (
                 <>
