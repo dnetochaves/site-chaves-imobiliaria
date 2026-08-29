@@ -79,10 +79,37 @@ export function MapView({
       center,
       zoom,
       interactive,
+      /** Sem `compact: true`, o controle de atribuição pode renderizar expandido em previews pequenos (ex.: thumbnail de card), cobrindo o mapa inteiro. */
+      attributionControl: interactive ? undefined : { compact: true },
     });
     mapRef.current = map;
 
+    /**
+     * O MapLibre só recolhe a atribuição compacta (remove
+     * `maplibregl-compact-show`) reagindo ao evento `drag` do mapa — que
+     * nunca dispara com `interactive: false`. Sem isso, a atribuição fica
+     * permanentemente expandida assim que os dados de atribuição chegam
+     * (assíncrono, após o carregamento do estilo/tiles), cobrindo o preview
+     * inteiro num container pequeno. Observa o controle e recolhe manualmente
+     * assim que ele aparece expandido.
+     */
+    let attribObserver: MutationObserver | undefined;
+    if (!interactive) {
+      attribObserver = new MutationObserver(() => {
+        const attrib = containerRef.current?.querySelector(".maplibregl-ctrl-attrib");
+        if (attrib?.classList.contains("maplibregl-compact-show")) {
+          attrib.classList.remove("maplibregl-compact-show");
+        }
+      });
+      attribObserver.observe(containerRef.current, {
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    }
+
     return () => {
+      attribObserver?.disconnect();
       map.remove();
       mapRef.current = null;
     };

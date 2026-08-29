@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import type { PropertyDisplayData } from "@/components/property/mapImovel";
+import { MapView } from "@/components/map/MapView";
 
 export type PropertyListItemProps = PropertyDisplayData & {
   imageUrl?: string;
@@ -21,9 +22,14 @@ export function PropertyListItem({
   furnished,
   petsAllowed,
   imageUrl,
+  latitude,
+  longitude,
   onMouseEnter,
   onMouseLeave,
 }: PropertyListItemProps) {
+  const hasCoordinates =
+    !imageUrl && typeof latitude === "number" && typeof longitude === "number";
+
   return (
     <Link
       href={`/imoveis/${id}`}
@@ -33,12 +39,22 @@ export function PropertyListItem({
       className="border-border-default bg-background-default flex gap-4 rounded-xl border p-3"
     >
       <div className="bg-background-muted relative h-24 w-24 shrink-0 overflow-hidden rounded-lg">
-        <Image
-          src={imageUrl ?? "/property-placeholder.svg"}
-          alt={title}
-          fill
-          className="object-cover"
-        />
+        {hasCoordinates ? (
+          <MapView
+            center={[longitude, latitude]}
+            zoom={15}
+            markers={[{ id, center: [longitude, latitude] }]}
+            interactive={false}
+            className="absolute inset-0 h-full w-full"
+          />
+        ) : (
+          <Image
+            src={imageUrl ?? "/property-placeholder.svg"}
+            alt={title}
+            fill
+            className="object-cover"
+          />
+        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-1">
