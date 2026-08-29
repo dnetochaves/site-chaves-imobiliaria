@@ -17,7 +17,7 @@ export default function Home() {
               Selecionados para hoje
             </h2>
             <p className="text-text-secondary text-sm">
-              Imóveis com visita disponível nas próximas 48 horas.
+              Imóveis selecionados pela nossa equipe.
             </p>
           </div>
           <Link

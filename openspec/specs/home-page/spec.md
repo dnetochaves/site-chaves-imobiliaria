@@ -6,25 +6,6 @@ Define o comportamento observável da página Home pública do site — a porta 
 
 ## Requirements
 
-### Requirement: Home exibe imóveis selecionados
-A Home SHALL exibir uma seção com uma lista de imóveis que têm visita disponível nas próximas 48 horas, incluindo um subtexto explicativo e um link para a listagem completa. Cada imóvel exibido SHALL indicar quando a próxima visita está disponível.
-
-#### Scenario: Carregar a Home
-- **WHEN** um usuário acessa a rota `/`
-- **THEN** a seção "Selecionados para hoje" (ou equivalente) exibe os imóveis com visita disponível nas próximas 48 horas, vindos da API, respeitando os estados de carregamento/erro/vazio da listagem
-
-#### Scenario: Link para ver todos os imóveis
-- **WHEN** um usuário acessa a Home
-- **THEN** a seção de imóveis em destaque exibe um link "Ver todos" que navega para a rota `/busca`
-
-#### Scenario: Card exibe a próxima visita disponível
-- **WHEN** um imóvel é exibido na seção "Selecionados para hoje"
-- **THEN** o card indica quando a próxima visita está disponível, usando o dado real retornado pela API
-
-#### Scenario: Nenhum imóvel com visita disponível
-- **WHEN** a API não retorna nenhum imóvel com visita disponível nas próximas 48 horas
-- **THEN** a seção exibe uma mensagem informando que não há imóveis com visita disponível no momento, em vez de uma área em branco ou da seção inteira desaparecer
-
 ### Requirement: Busca a partir da Home navega para a tela de Busca
 A Home SHALL prover um formulário de busca (local e tipo de operação) que, ao ser submetido, navega o usuário para a rota `/busca` com os critérios preenchidos como parâmetros de URL. A Home SHALL também exibir atalhos de bairro de acesso rápido próximos à busca, que navegam diretamente para `/busca` com o bairro já preenchido.
 
@@ -65,3 +46,18 @@ A Home SHALL exibir um bloco de CTA para o serviço de gestão de condomínios e
 #### Scenario: CTA de cadastro de imóvel visível
 - **WHEN** um usuário acessa a Home
 - **THEN** o bloco "Tem um imóvel para alugar?" está visível com uma ação primária (ex.: "Anunciar imóvel") e uma ação secundária (ex.: "Falar com alguém"), ambas clicáveis
+
+### Requirement: Home exibe imóveis verificados pela administração
+A Home SHALL exibir uma seção com uma lista de imóveis marcados como verificados pela administração, incluindo um subtexto explicativo e um link para a listagem completa.
+
+#### Scenario: Carregar a Home
+- **WHEN** um usuário acessa a rota `/`
+- **THEN** a seção "Selecionados para hoje" (ou equivalente) exibe os imóveis verificados pela administração, vindos da API, respeitando os estados de carregamento/erro/vazio da listagem
+
+#### Scenario: Link para ver todos os imóveis
+- **WHEN** um usuário acessa a Home
+- **THEN** a seção de imóveis em destaque exibe um link "Ver todos" que navega para a rota `/busca`
+
+#### Scenario: Nenhum imóvel verificado
+- **WHEN** a API não retorna nenhum imóvel verificado
+- **THEN** a seção exibe uma mensagem informando que não há imóveis disponíveis no momento, em vez de uma área em branco ou da seção inteira desaparecer

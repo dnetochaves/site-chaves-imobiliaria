@@ -1,14 +1,16 @@
 "use client";
 
-import { useVisitasDisponiveisEmBreve } from "@/lib/api/hooks/use-visitas-disponiveis-em-breve";
+import { useImoveis } from "@/lib/api/hooks/use-imoveis";
 import { PropertyCard } from "@/components/property/PropertyCard";
 import { toPropertyDisplayData } from "@/components/property/mapImovel";
-import { formatProximaVisita } from "@/lib/format";
 
 const MAX_ITEMS = 4;
 
 export function SelecionadosParaHoje() {
-  const { status, data, error } = useVisitasDisponiveisEmBreve();
+  const { status, data, error } = useImoveis({
+    verificado: true,
+    limit: MAX_ITEMS,
+  });
 
   if (status === "pending") {
     return (
@@ -35,22 +37,18 @@ export function SelecionadosParaHoje() {
     );
   }
 
-  if (data.length === 0) {
+  if (data.items.length === 0) {
     return (
       <p className="text-text-secondary text-sm">
-        Nenhum imóvel com visita disponível no momento.
+        Nenhum imóvel disponível no momento.
       </p>
     );
   }
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {data.slice(0, MAX_ITEMS).map(({ imovel, proxima_visita_em }) => (
-        <PropertyCard
-          key={imovel.id}
-          {...toPropertyDisplayData(imovel)}
-          nextVisitLabel={formatProximaVisita(proxima_visita_em)}
-        />
+      {data.items.map((imovel) => (
+        <PropertyCard key={imovel.id} {...toPropertyDisplayData(imovel)} />
       ))}
     </div>
   );

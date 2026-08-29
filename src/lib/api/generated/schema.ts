@@ -1279,6 +1279,7 @@ export interface operations {
                 aceita_pets?: boolean | null;
                 disponivel_aluguel?: boolean | null;
                 disponivel_venda?: boolean | null;
+                verificado?: boolean | null;
                 ordenar?: string;
                 limit?: number;
                 offset?: number;
