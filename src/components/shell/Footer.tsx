@@ -12,7 +12,6 @@ const columns: FooterColumn[] = [
     links: [
       { label: "Alugar", href: "/alugar" },
       { label: "Comprar", href: "/comprar" },
-      { label: "Bairros", href: "/bairros" },
     ],
   },
   {
