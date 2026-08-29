@@ -41,6 +41,8 @@ export type MapViewProps = {
   mapStyle?: string;
   /** Ajusta automaticamente os limites do mapa para caber todos os marcadores. */
   fitToMarkers?: boolean;
+  /** false desliga pan/zoom/rotate (scroll, drag, teclado, toque) — usado em previews decorativos dentro de um card clicável. */
+  interactive?: boolean;
 };
 
 function createMarkerElement(marker: MapMarker): HTMLElement {
@@ -62,6 +64,7 @@ export function MapView({
   className,
   mapStyle = DEFAULT_MAP_STYLE,
   fitToMarkers = false,
+  interactive = true,
 }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MaplibreMap | null>(null);
@@ -75,6 +78,7 @@ export function MapView({
       style: mapStyle,
       center,
       zoom,
+      interactive,
     });
     mapRef.current = map;
 
@@ -132,7 +136,12 @@ export function MapView({
     <div
       ref={containerRef}
       data-slot="map-view"
-      className={className ?? "h-96 w-full rounded-lg"}
+      className={[
+        className ?? "h-96 w-full rounded-lg",
+        !interactive && "maplibregl-noninteractive",
+      ]
+        .filter(Boolean)
+        .join(" ")}
     />
   );
 }

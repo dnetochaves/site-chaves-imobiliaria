@@ -64,6 +64,20 @@
   --color-ring: var(--ring);
 }
 
+/*
+ * MapView com `interactive={false}` (previews decorativos dentro de um
+ * `<Link>` inteiro, ex.: PropertyCard) — o CSS do próprio MapLibre define
+ * `.maplibregl-ctrl { pointer-events: auto }` (para controles como o de
+ * atribuição funcionarem mesmo com o container em `pointer-events: none`),
+ * o que faz o link do card não navegar quando o clique cai em cima do
+ * controle de atribuição. `!important` é necessário pra vencer essa regra
+ * do MapLibre com a mesma especificidade.
+ */
+.maplibregl-noninteractive,
+.maplibregl-noninteractive .maplibregl-ctrl {
+  pointer-events: none !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

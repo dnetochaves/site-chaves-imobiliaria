@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BedDouble, Bath, Car, Ruler, Heart } from "lucide-react";
+import { MapView } from "@/components/map/MapView";
 
 export type PropertyCardProps = {
   id: number;
@@ -16,6 +17,8 @@ export type PropertyCardProps = {
   furnished?: boolean;
   petsAllowed?: boolean;
   imageUrl?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   nextVisitLabel?: string;
 };
 
@@ -33,8 +36,12 @@ export function PropertyCard({
   furnished = false,
   petsAllowed = false,
   imageUrl,
+  latitude,
+  longitude,
   nextVisitLabel,
 }: PropertyCardProps) {
+  const hasCoordinates =
+    !imageUrl && typeof latitude === "number" && typeof longitude === "number";
   return (
     <Link
       href={`/imoveis/${id}`}
@@ -42,12 +49,22 @@ export function PropertyCard({
       className="border-border-default bg-background-default flex flex-col overflow-hidden rounded-xl border shadow-sm"
     >
       <div className="bg-background-muted relative aspect-[4/3]">
-        <Image
-          src={imageUrl ?? "/property-placeholder.svg"}
-          alt={title}
-          fill
-          className="object-cover"
-        />
+        {hasCoordinates ? (
+          <MapView
+            center={[longitude, latitude]}
+            zoom={15}
+            markers={[{ id, center: [longitude, latitude] }]}
+            interactive={false}
+            className="absolute inset-0 h-full w-full"
+          />
+        ) : (
+          <Image
+            src={imageUrl ?? "/property-placeholder.svg"}
+            alt={title}
+            fill
+            className="object-cover"
+          />
+        )}
         <span className="bg-background-inverse absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-medium text-white">
           {operationLabel}
         </span>
