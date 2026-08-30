@@ -3,15 +3,18 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { HeroFeaturedCard } from "@/app/_home/HeroFeaturedCard";
+import { HeroDeliveriesBadge } from "@/app/_home/HeroDeliveriesBadge";
+import { HeroTrustCard } from "@/app/_home/HeroTrustCard";
 
 type Operacao = "aluguel" | "compra";
 
-const NEIGHBORHOOD_CHIPS = ["Pinheiros", "Vila Madalena", "Santa Cecília"];
+const NEIGHBORHOOD_CHIPS = ["Rio Vermelho", "Barra", "Pituba", "Graça"];
 
 export function Hero() {
   const router = useRouter();
@@ -33,7 +36,7 @@ export function Hero() {
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-3">
           <p className="text-brand-secondary text-xs font-semibold tracking-wide uppercase">
-            Aluguel e compra · São Paulo
+            Aluguel e compra · Salvador e região metropolitana
           </p>
           <h1 className="text-6xl font-bold text-text-primary">
             Um lugar que encaixa na sua vida.
@@ -52,7 +55,7 @@ export function Hero() {
             <Label htmlFor="hero-local">Onde você quer morar?</Label>
             <Input
               id="hero-local"
-              placeholder="Bairro ou cidade"
+              placeholder="Bairro, rua ou praia"
               value={local}
               onChange={(event) => setLocal(event.target.value)}
             />
@@ -96,7 +99,16 @@ export function Hero() {
       </div>
 
       <div className="bg-background-muted relative aspect-[4/3] overflow-hidden rounded-xl">
+        <Image
+          src="/home-hero.jpg"
+          alt="Corretora da Chaves mostrando um apartamento para um casal"
+          fill
+          className="object-cover"
+          priority
+        />
+        <HeroDeliveriesBadge />
         <HeroFeaturedCard />
+        <HeroTrustCard />
       </div>
     </section>
   );

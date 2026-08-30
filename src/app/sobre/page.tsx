@@ -30,9 +30,12 @@ export default function SobrePage() {
           Existimos para o momento em que a chave gira.
         </h1>
         <p className="text-text-secondary text-lg">
-          Começamos em 2026 porque alugar um imóvel no Brasil ainda exigia
-          fiador, três visitas e um contrato que ninguém entendia. Trocamos
-          isso por uma coisa só: informação completa antes de você decidir.
+          Nascemos em Salvador, em 2026, porque quem procura imóvel aqui
+          ainda encara anúncio sem preço fechado, visita marcada e não
+          cumprida e contrato que ninguém entende. Trocamos isso por uma
+          coisa só: informação completa antes de você decidir. Atendemos
+          Salvador e a região metropolitana — de Rio Vermelho e Barra a
+          Lauro de Freitas.
         </p>
       </section>
 
