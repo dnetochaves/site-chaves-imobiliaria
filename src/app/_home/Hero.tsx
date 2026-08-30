@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { HeroFeaturedCard } from "@/app/_home/HeroFeaturedCard";
 import { HeroDeliveriesBadge } from "@/app/_home/HeroDeliveriesBadge";
 import { HeroTrustCard } from "@/app/_home/HeroTrustCard";
 
@@ -107,7 +106,6 @@ export function Hero() {
           priority
         />
         <HeroDeliveriesBadge />
-        <HeroFeaturedCard />
         <HeroTrustCard />
       </div>
     </section>

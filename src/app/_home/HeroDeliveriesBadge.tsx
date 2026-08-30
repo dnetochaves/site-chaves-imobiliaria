@@ -1,9 +1,9 @@
 import { BadgeCheck } from "lucide-react";
 
-// Estatística real fornecida pela administração (não vem da API) — ver
-// design.md deste change para o registro da origem e o risco de ficar
-// desatualizada com o tempo.
-const DELIVERIES_LABEL = "84 chaves entregues em agosto";
+// Estatística real fornecida pela administração (não vem da API) — sem
+// referência a mês específico de propósito, pra não exigir atualização
+// manual todo mês (ver design.md do change simplify-hero-credibility-composition).
+const DELIVERIES_LABEL = "84 chaves entregues";
 
 export function HeroDeliveriesBadge() {
   return (

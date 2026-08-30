@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export function ListPropertyCta() {
   return (
-    <section className="border-border-default flex flex-col gap-4 rounded-xl border p-8 md:flex-row md:items-center md:justify-between">
+    <section className="flex flex-col gap-4 rounded-xl p-8 md:flex-row md:items-center md:justify-between">
       <div className="flex flex-col gap-2">
         <h2 className="text-2xl font-semibold text-text-primary">
           Tem um imóvel para alugar?

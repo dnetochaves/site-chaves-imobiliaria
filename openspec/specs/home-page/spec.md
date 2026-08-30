@@ -67,7 +67,7 @@ O Hero da Home SHALL exibir, sobre a foto ilustrativa, um selo com uma estatíst
 
 #### Scenario: Selo de estatística visível
 - **WHEN** um usuário acessa a Home
-- **THEN** o Hero exibe um selo com a estatística de chaves entregues no período mais recente disponível
+- **THEN** o Hero exibe um selo com a estatística de chaves entregues, sem exigir um rótulo de período (ex.: mês) associado ao número
 
 #### Scenario: Card de acompanhamento por corretor visível
 - **WHEN** um usuário acessa a Home
