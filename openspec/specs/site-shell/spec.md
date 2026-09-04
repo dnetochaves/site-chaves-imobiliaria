@@ -57,3 +57,10 @@ Quando o usuário está autenticado, o header SHALL exibir um link visível para
 #### Scenario: Link de favoritos ausente pra usuário não autenticado
 - **WHEN** um usuário não autenticado acessa qualquer página pública
 - **THEN** o header não exibe nenhum link para `/favoritos`
+
+### Requirement: Favicon reflete a marca oficial
+O site SHALL usar o favicon oficial da marca Chaves Imobiliária (não um ícone genérico ou placeholder de scaffold) na aba do navegador.
+
+#### Scenario: Favicon visível na aba do navegador
+- **WHEN** um usuário acessa qualquer página pública do site
+- **THEN** a aba do navegador exibe o favicon oficial da marca

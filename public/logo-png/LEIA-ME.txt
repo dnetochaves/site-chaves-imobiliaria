@@ -1,0 +1,30 @@
+CHAVES IMOBILIÁRIA — PACOTE DE LOGO (PNG)
+Gerado em 29/08/2026 · fundo transparente em todos os arquivos
+
+ESTRUTURA
+logo-principal/    símbolo + "chaves" + "imobiliária" (uso padrão)
+logo-horizontal/   símbolo + "chaves imobiliária" em linha única (assinaturas baixas, rodapés)
+logo-vertical/     símbolo acima, nome abaixo (formatos quadrados, redes sociais)
+logomark/          somente o símbolo
+wordmark/          somente "chaves"
+favicon/           16, 32, 48 e 64px — traço engrossado para leitura em tamanho pequeno
+app-icon/          180 (iOS), 512 e 1024px + versão de fundo claro
+
+VERSÕES CROMÁTICAS
+positiva   petróleo #0D4650 + dente areia #D2954F — para fundos claros
+negativa   branco + dente areia — para fundos escuros e fotografia
+mono       #12262A em uma só cor — fax, gravação, carimbo, 1 cor de impressão
+cinza      escala de cinza — documentos em preto e branco
+
+TAMANHOS
+400px e 1200px de largura. Para materiais impressos ou aplicações acima de 1200px,
+peça o arquivo vetorial (SVG/PDF) — PNG não escala sem perda.
+
+TAMANHO MÍNIMO
+Símbolo isolado: 16px em tela / 6mm impresso.
+Assinatura completa: 96px de largura.
+Respiro mínimo em volta: a altura do dente (1/6 do diâmetro do símbolo).
+
+NÃO FAÇA
+Distorcer, rotacionar, recolorir, aplicar sombra ou contorno, trocar a tipografia,
+ou usar a versão positiva sobre fundo escuro (use a negativa).

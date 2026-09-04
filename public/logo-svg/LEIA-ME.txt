@@ -1,0 +1,50 @@
+CHAVES IMOBILIÁRIA — PACOTE DE LOGO (SVG / VETOR)
+Gerado em 29/08/2026
+
+O SÍMBOLO É CONTORNO FECHADO
+O arco não usa traço (stroke): é um caminho preenchido. Ele escala de 16px a 16
+metros sem ajuste, e o fornecedor pode cortar, gravar, bordar ou vazar em metal
+direto do arquivo. Os arquivos de logomark, favicon e app-icon não têm texto —
+já estão 100% em curvas e podem ir para produção como estão.
+
+ATENÇÃO — TEXTO EDITÁVEL NAS ASSINATURAS
+Nos arquivos que contêm o nome (logo-principal, logo-horizontal, logo-vertical
+e wordmark) o texto está como TEXTO, não como curvas. Antes de enviar para
+gráfica, fornecedor ou qualquer terceiro:
+
+  1. abra o SVG no Illustrator, Figma, CorelDRAW ou Inkscape;
+  2. selecione o texto;
+  3. converta em curvas / contornos
+     Illustrator e Figma: Ctrl+Shift+O · Inkscape: Ctrl+Shift+C
+     CorelDRAW: Ctrl+Q;
+  4. salve como SVG, PDF, EPS ou AI.
+
+Sem essa conversão, quem abrir o arquivo em uma máquina sem a fonte instalada
+verá o nome em outra tipografia e o desenho fora de proporção. As fontes são
+gratuitas no Google Fonts:
+  Plus Jakarta Sans  — a palavra "chaves"
+  IBM Plex Mono      — a palavra "imobiliária" nas versões principal e vertical
+
+CORES
+petróleo  #0D4650  ·  C88 M52 Y44 K37  ·  Pantone 5473 C
+areia     #D2954F  ·  C16 M45 Y77 K2   ·  Pantone 7407 C
+cal       #F8F7F4  ·  papel offset natural, nunca branco puro em impresso
+
+VERSÕES CROMÁTICAS
+positiva   petróleo + dente areia — fundos claros
+negativa   branco + dente areia — fundos escuros e fotografia
+mono       #12262A em uma só cor — carimbo, gravação, 1 cor de impressão
+cinza      escala de cinza — documentos em preto e branco
+
+FAVICON
+favicon-*.svg tem o traço engrossado (10u em vez de 8u) para o vão não fechar
+abaixo de 24px. Não use o logomark normal como favicon.
+
+TAMANHO MÍNIMO E RESPIRO
+Símbolo isolado: 16px em tela / 6mm impresso.
+Assinatura completa: 96px de largura.
+Respiro mínimo em volta: a altura do dente (1/6 do diâmetro do símbolo).
+
+NÃO FAÇA
+Distorcer, rotacionar, recolorir, aplicar sombra ou contorno, trocar a
+tipografia, ou usar a versão positiva sobre fundo escuro.
