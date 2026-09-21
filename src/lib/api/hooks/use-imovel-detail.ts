@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api/client";
+import { toApiError } from "@/lib/api/errors";
 
 export class ImovelNaoEncontradoError extends Error {}
 
@@ -13,7 +14,7 @@ export function useImovelDetail(imovelId: number) {
       );
       if (error) {
         if (response.status === 404) throw new ImovelNaoEncontradoError();
-        throw error;
+        throw toApiError(error, response);
       }
       return data;
     },

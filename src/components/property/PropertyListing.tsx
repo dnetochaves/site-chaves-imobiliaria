@@ -3,6 +3,7 @@
 import { useImoveis } from "@/lib/api/hooks/use-imoveis";
 import { PropertyCard } from "@/components/property/PropertyCard";
 import { toPropertyDisplayData } from "@/components/property/mapImovel";
+import { describeApiError } from "@/lib/api/errors";
 
 export type PropertyListingProps = {
   limit?: number;
@@ -31,8 +32,10 @@ export function PropertyListing({ limit = 4, bairro }: PropertyListingProps) {
   if (status === "error") {
     return (
       <p className="text-feedback-error text-sm">
-        Não foi possível carregar os imóveis agora. Tente novamente em
-        instantes. ({String(error)})
+        {describeApiError(
+          error,
+          "Não foi possível carregar os imóveis agora. Tente novamente em instantes.",
+        )}
       </p>
     );
   }

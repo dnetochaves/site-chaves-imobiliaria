@@ -13,6 +13,7 @@ import {
   type GeocodeResult,
 } from "@/lib/api/hooks/use-geocode-address";
 import { useCreateImovel } from "@/lib/api/hooks/use-create-imovel";
+import { describeApiError } from "@/lib/api/errors";
 
 function addressKey(fields: {
   rua: string;
@@ -501,7 +502,11 @@ export function ListPropertyForm() {
 
       {createImovel.isError && (
         <p className="text-feedback-error text-sm">
-          Não foi possível cadastrar o imóvel agora. Tente novamente.
+          {describeApiError(
+            createImovel.error,
+            "Não foi possível cadastrar o imóvel agora. Tente novamente.",
+            { showValidationDetails: true },
+          )}
         </p>
       )}
 

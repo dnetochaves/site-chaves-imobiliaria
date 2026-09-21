@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useImoveis } from "@/lib/api/hooks/use-imoveis";
 import { PropertyCard } from "@/components/property/PropertyCard";
 import { toPropertyDisplayData } from "@/components/property/mapImovel";
+import { describeApiError } from "@/lib/api/errors";
 
 const QUICK_FILTERS: { label: string; params: Record<string, string> }[] = [
   { label: "Studio", params: { quartos: "0" } },
@@ -145,8 +146,10 @@ function FeaturedRentals() {
   if (status === "error") {
     return (
       <p className="text-feedback-error text-sm">
-        Não foi possível carregar os imóveis agora. Tente novamente em
-        instantes. ({String(error)})
+        {describeApiError(
+          error,
+          "Não foi possível carregar os imóveis agora. Tente novamente em instantes.",
+        )}
       </p>
     );
   }

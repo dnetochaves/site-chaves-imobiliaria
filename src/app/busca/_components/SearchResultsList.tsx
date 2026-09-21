@@ -18,6 +18,7 @@ import {
   filtersToApiParams,
   RESULTS_PER_PAGE,
 } from "@/app/busca/filters";
+import { describeApiError } from "@/lib/api/errors";
 
 const SORT_OPTIONS = [
   { value: "", label: "Relevância" },
@@ -88,8 +89,10 @@ export function SearchResultsList({ onHoverItem }: SearchResultsListProps) {
 
       {status === "error" && (
         <p className="text-feedback-error text-sm">
-          Não foi possível carregar os imóveis agora. Tente novamente em
-          instantes. ({String(error)})
+          {describeApiError(
+            error,
+            "Não foi possível carregar os imóveis agora. Tente novamente em instantes.",
+          )}
         </p>
       )}
 

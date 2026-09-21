@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api/client";
+import { toApiError } from "@/lib/api/errors";
 import { useAuth } from "@/lib/auth/AuthContext";
 import type { components } from "@/lib/api/generated/schema";
 
@@ -13,8 +14,8 @@ export function useFavoritos() {
   return useQuery({
     queryKey: FAVORITOS_QUERY_KEY,
     queryFn: async () => {
-      const { data, error } = await apiClient.GET("/favoritos");
-      if (error) throw error;
+      const { data, error, response } = await apiClient.GET("/favoritos");
+      if (error) throw toApiError(error, response);
       return data;
     },
     enabled: status === "authenticated",
@@ -29,14 +30,14 @@ export function useToggleFavorito(unidade: UnidadeRead) {
 
   const mutation = useMutation({
     mutationFn: async (next: boolean) => {
-      const { error } = next
+      const { error, response } = next
         ? await apiClient.POST("/favoritos/{unidade_id}", {
             params: { path: { unidade_id: unidade.id } },
           })
         : await apiClient.DELETE("/favoritos/{unidade_id}", {
             params: { path: { unidade_id: unidade.id } },
           });
-      if (error) throw error;
+      if (error) throw toApiError(error, response);
     },
     onMutate: async (next) => {
       await queryClient.cancelQueries({ queryKey: FAVORITOS_QUERY_KEY });

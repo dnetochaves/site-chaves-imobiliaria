@@ -10,6 +10,7 @@ import { buildWhatsappHref } from "@/lib/whatsapp";
 import { useImoveis } from "@/lib/api/hooks/use-imoveis";
 import { PropertyCard } from "@/components/property/PropertyCard";
 import { toPropertyDisplayData } from "@/components/property/mapImovel";
+import { describeApiError } from "@/lib/api/errors";
 
 const WHATSAPP_HREF = buildWhatsappHref(
   "Quero simular o financiamento de um imóvel",
@@ -173,8 +174,10 @@ function FeaturedSales() {
   if (status === "error") {
     return (
       <p className="text-feedback-error text-sm">
-        Não foi possível carregar os imóveis agora. Tente novamente em
-        instantes. ({String(error)})
+        {describeApiError(
+          error,
+          "Não foi possível carregar os imóveis agora. Tente novamente em instantes.",
+        )}
       </p>
     );
   }

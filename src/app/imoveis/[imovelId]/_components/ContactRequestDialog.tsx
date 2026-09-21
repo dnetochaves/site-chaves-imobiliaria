@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useCreateLead } from "@/lib/api/hooks/use-create-lead";
+import { describeApiError } from "@/lib/api/errors";
 
 export type ContactRequestDialogProps = {
   unidadeId: number;
@@ -28,7 +29,8 @@ export function ContactRequestDialog({
   const [open, setOpen] = useState(false);
   const [nome, setNome] = useState(user?.name ?? "");
   const [telefone, setTelefone] = useState("");
-  const { mutate, isPending, isSuccess, isError, reset } = useCreateLead();
+  const { mutate, isPending, isSuccess, isError, error, reset } =
+    useCreateLead();
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
@@ -96,7 +98,11 @@ export function ContactRequestDialog({
 
             {isError && (
               <p className="text-feedback-error text-sm">
-                Não foi possível enviar seu pedido agora. Tente novamente.
+                {describeApiError(
+                  error,
+                  "Não foi possível enviar seu pedido agora. Tente novamente.",
+                  { showValidationDetails: true },
+                )}
               </p>
             )}
 

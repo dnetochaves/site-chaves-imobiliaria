@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useFavoritos } from "@/lib/api/hooks/use-favoritos";
 import { FavoritoItem } from "@/app/favoritos/_components/FavoritoItem";
+import { describeApiError } from "@/lib/api/errors";
 
 export default function FavoritosPage() {
   const { status, login } = useAuth();
@@ -47,8 +48,10 @@ function FavoritosList() {
   if (status === "error") {
     return (
       <p className="text-feedback-error text-sm">
-        Não foi possível carregar seus favoritos agora. Tente novamente em
-        instantes. ({String(error)})
+        {describeApiError(
+          error,
+          "Não foi possível carregar seus favoritos agora. Tente novamente em instantes.",
+        )}
       </p>
     );
   }
