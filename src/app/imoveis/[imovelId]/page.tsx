@@ -13,6 +13,7 @@ import { ShareButton } from "@/app/imoveis/[imovelId]/_components/ShareButton";
 import { getAmenidadeIcon } from "@/app/imoveis/[imovelId]/_components/amenidadeIcons";
 import { MapView } from "@/components/map/MapView";
 import { formatArea } from "@/lib/format";
+import { TIPO_OPTIONS } from "@/lib/property-types";
 
 export default function ImovelDetailPage() {
   const params = useParams<{ imovelId: string }>();
@@ -59,6 +60,9 @@ export default function ImovelDetailPage() {
   const longitude = Number(unidade.longitude);
   const hasCoordinates = !Number.isNaN(latitude) && !Number.isNaN(longitude);
   const endereco = `${unidade.rua}, ${unidade.numero}${unidade.complemento ? ` - ${unidade.complemento}` : ""}`;
+  const propertyTypeLabel =
+    TIPO_OPTIONS.find((option) => option.value === unidade.tipo)?.label ??
+    null;
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 py-8">
@@ -79,9 +83,16 @@ export default function ImovelDetailPage() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="flex flex-col gap-8 lg:col-span-2">
           <div className="flex flex-col gap-2">
-            <p className="text-brand-secondary text-xs font-semibold tracking-wide uppercase">
-              {unidade.bairro} · {unidade.cidade}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-brand-secondary text-xs font-semibold tracking-wide uppercase">
+                {unidade.bairro} · {unidade.cidade}
+              </p>
+              {propertyTypeLabel && (
+                <span className="bg-background-muted text-text-secondary rounded-full px-2.5 py-0.5 text-xs">
+                  {propertyTypeLabel}
+                </span>
+              )}
+            </div>
             <div className="flex items-start justify-between gap-4">
               <h1 className="text-text-primary text-2xl font-semibold">
                 {imovel.titulo}

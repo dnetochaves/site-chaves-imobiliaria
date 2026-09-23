@@ -1,4 +1,5 @@
 import { formatArea, formatPrice } from "@/lib/format";
+import { TIPO_OPTIONS } from "@/lib/property-types";
 import type { components } from "@/lib/api/generated/schema";
 
 type ImovelSummary = components["schemas"]["ImovelSummary"];
@@ -17,6 +18,7 @@ export type PropertyDisplayData = {
   operationLabel: "Aluguel" | "Venda";
   furnished: boolean;
   petsAllowed: boolean;
+  propertyType: string | null;
   latitude: number | null;
   longitude: number | null;
   imageUrl: string | undefined;
@@ -49,6 +51,9 @@ export function toPropertyDisplayData(imovel: ImovelSummary): PropertyDisplayDat
     operationLabel,
     furnished: imovel.mobiliado,
     petsAllowed: imovel.aceita_pets,
+    propertyType:
+      TIPO_OPTIONS.find((option) => option.value === imovel.unidade.tipo)
+        ?.label ?? null,
     latitude: Number.isNaN(latitude) ? null : latitude,
     longitude: Number.isNaN(longitude) ? null : longitude,
     imageUrl: imovel.foto_capa ?? undefined,

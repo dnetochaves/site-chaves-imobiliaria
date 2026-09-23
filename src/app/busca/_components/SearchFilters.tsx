@@ -15,11 +15,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { TIPO_OPTIONS } from "@/lib/property-types";
 import {
   parseFilters,
   filtersToSearchParams,
   getActiveFilterChips,
-  TIPO_OPTIONS,
   type SearchFiltersState,
 } from "@/app/busca/filters";
 

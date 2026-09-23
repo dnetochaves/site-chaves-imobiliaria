@@ -16,6 +16,7 @@ export type PropertyCardProps = {
   operationLabel: "Aluguel" | "Venda";
   furnished?: boolean;
   petsAllowed?: boolean;
+  propertyType?: string | null;
   imageUrl?: string;
   latitude?: number | null;
   longitude?: number | null;
@@ -35,6 +36,7 @@ export function PropertyCard({
   operationLabel,
   furnished = false,
   petsAllowed = false,
+  propertyType,
   imageUrl,
   latitude,
   longitude,
@@ -110,8 +112,13 @@ export function PropertyCard({
           </span>
         </div>
 
-        {(furnished || petsAllowed) && (
+        {(propertyType || furnished || petsAllowed) && (
           <div className="flex flex-wrap gap-2">
+            {propertyType && (
+              <span className="bg-background-muted text-text-secondary rounded-full px-2.5 py-0.5 text-xs">
+                {propertyType}
+              </span>
+            )}
             {furnished && (
               <span className="bg-background-muted text-text-secondary rounded-full px-2.5 py-0.5 text-xs">
                 Mobiliado

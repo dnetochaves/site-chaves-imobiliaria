@@ -21,6 +21,7 @@ export function PropertyListItem({
   operationLabel,
   furnished,
   petsAllowed,
+  propertyType,
   imageUrl,
   latitude,
   longitude,
@@ -81,6 +82,11 @@ export function PropertyListItem({
           {parkingSpots > 0 && (
             <span className="bg-background-muted text-text-secondary rounded-full px-2 py-0.5 text-xs">
               {parkingSpots} vaga{parkingSpots === 1 ? "" : "s"}
+            </span>
+          )}
+          {propertyType && (
+            <span className="bg-background-muted text-text-secondary rounded-full px-2 py-0.5 text-xs">
+              {propertyType}
             </span>
           )}
           {furnished && (

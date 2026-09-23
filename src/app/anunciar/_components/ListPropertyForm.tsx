@@ -7,6 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { MapView } from "@/components/map/MapView";
 import {
   useGeocodeAddress,
@@ -14,6 +21,7 @@ import {
 } from "@/lib/api/hooks/use-geocode-address";
 import { useCreateImovel } from "@/lib/api/hooks/use-create-imovel";
 import { describeApiError } from "@/lib/api/errors";
+import { TIPO_OPTIONS, type PropertyType } from "@/lib/property-types";
 
 function addressKey(fields: {
   rua: string;
@@ -37,6 +45,7 @@ export function ListPropertyForm() {
   const [quartos, setQuartos] = useState("0");
   const [banheiros, setBanheiros] = useState("0");
   const [vagasGaragem, setVagasGaragem] = useState("0");
+  const [tipo, setTipo] = useState("");
 
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -114,6 +123,7 @@ export function ListPropertyForm() {
       quartos: Number(quartos) || 0,
       banheiros: Number(banheiros) || 0,
       vagas_garagem: Number(vagasGaragem) || 0,
+      tipo: (tipo as PropertyType) || undefined,
       titulo,
       descricao,
       disponivel_aluguel: disponivelAluguel,
@@ -352,6 +362,23 @@ export function ListPropertyForm() {
               onChange={(e) => setVagasGaragem(e.target.value)}
             />
           </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5 sm:w-60">
+          <Label htmlFor="tipo">Tipo de imóvel (opcional)</Label>
+          <Select value={tipo || "nao-especificado"} onValueChange={(value) => setTipo(value === "nao-especificado" ? "" : value)}>
+            <SelectTrigger id="tipo">
+              <SelectValue placeholder="Não especificado" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="nao-especificado">Não especificado</SelectItem>
+              {TIPO_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex flex-wrap gap-4">
