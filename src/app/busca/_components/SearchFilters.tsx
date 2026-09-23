@@ -7,11 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
   parseFilters,
   filtersToSearchParams,
   getActiveFilterChips,
+  TIPO_OPTIONS,
   type SearchFiltersState,
 } from "@/app/busca/filters";
 
@@ -22,9 +30,13 @@ export function SearchFilters() {
   const searchParams = useSearchParams();
   const filters = parseFilters(searchParams);
 
-  const [bairroInput, setBairroInput] = useState(filters.bairro);
+  const [qInput, setQInput] = useState(filters.q);
   const [precoMinInput, setPrecoMinInput] = useState(filters.precoMin);
   const [precoMaxInput, setPrecoMaxInput] = useState(filters.precoMax);
+  const [cidadeInput, setCidadeInput] = useState(filters.cidade);
+  const [quartosMinInput, setQuartosMinInput] = useState(filters.quartosMin);
+  const [vagasMinInput, setVagasMinInput] = useState(filters.vagasMin);
+  const [areaMinInput, setAreaMinInput] = useState(filters.areaMin);
   const [showMoreFilters, setShowMoreFilters] = useState(false);
 
   function applyFilters(patch: Partial<SearchFiltersState>) {
@@ -43,13 +55,13 @@ export function SearchFilters() {
             aria-hidden="true"
           />
           <Input
-            value={bairroInput}
-            onChange={(e) => setBairroInput(e.target.value)}
-            onBlur={() => applyFilters({ bairro: bairroInput })}
+            value={qInput}
+            onChange={(e) => setQInput(e.target.value)}
+            onBlur={() => applyFilters({ q: qInput })}
             onKeyDown={(e) => {
-              if (e.key === "Enter") applyFilters({ bairro: bairroInput });
+              if (e.key === "Enter") applyFilters({ q: qInput });
             }}
-            placeholder="Bairro, cidade"
+            placeholder="Bairro, rua, condomínio..."
             className="pl-9"
           />
         </div>
@@ -144,6 +156,93 @@ export function SearchFilters() {
               }
             />
             <Label htmlFor="filter-aceita-pets">Aceita pets</Label>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="filter-tipo">Tipo de imóvel</Label>
+            <Select
+              value={filters.tipo || "qualquer"}
+              onValueChange={(value) =>
+                applyFilters({ tipo: value === "qualquer" ? "" : value })
+              }
+            >
+              <SelectTrigger id="filter-tipo" size="sm" className="w-44">
+                <SelectValue placeholder="Qualquer tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="qualquer">Qualquer tipo</SelectItem>
+                {TIPO_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="filter-cidade">Cidade</Label>
+            <Input
+              id="filter-cidade"
+              value={cidadeInput}
+              onChange={(e) => setCidadeInput(e.target.value)}
+              onBlur={() => applyFilters({ cidade: cidadeInput })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") applyFilters({ cidade: cidadeInput });
+              }}
+              placeholder="Cidade"
+              className="w-40"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="filter-quartos-min">Quartos mínimo</Label>
+            <Input
+              id="filter-quartos-min"
+              value={quartosMinInput}
+              onChange={(e) => setQuartosMinInput(e.target.value)}
+              onBlur={() => applyFilters({ quartosMin: quartosMinInput })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  applyFilters({ quartosMin: quartosMinInput });
+              }}
+              placeholder="Ex: 2"
+              inputMode="numeric"
+              className="w-28"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="filter-vagas-min">Vagas mínimo</Label>
+            <Input
+              id="filter-vagas-min"
+              value={vagasMinInput}
+              onChange={(e) => setVagasMinInput(e.target.value)}
+              onBlur={() => applyFilters({ vagasMin: vagasMinInput })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  applyFilters({ vagasMin: vagasMinInput });
+              }}
+              placeholder="Ex: 1"
+              inputMode="numeric"
+              className="w-28"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="filter-area-min">Área mínima (m²)</Label>
+            <Input
+              id="filter-area-min"
+              value={areaMinInput}
+              onChange={(e) => setAreaMinInput(e.target.value)}
+              onBlur={() => applyFilters({ areaMin: areaMinInput })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") applyFilters({ areaMin: areaMinInput });
+              }}
+              placeholder="Ex: 60"
+              inputMode="numeric"
+              className="w-28"
+            />
           </div>
         </div>
       )}

@@ -24,6 +24,7 @@ const SORT_OPTIONS = [
   { value: "", label: "Relevância" },
   { value: "preco_asc", label: "Menor preço" },
   { value: "preco_desc", label: "Maior preço" },
+  { value: "recentes", label: "Mais recentes" },
 ];
 
 export type SearchResultsListProps = {
@@ -54,7 +55,7 @@ export function SearchResultsList({ onHoverItem }: SearchResultsListProps) {
         <div className="flex flex-col gap-1">
           <h2 className="text-text-primary text-lg font-semibold">
             {status === "success"
-              ? `${data.total} imóve${data.total === 1 ? "l" : "is"}${filters.bairro ? ` em ${filters.bairro}` : ""}`
+              ? `${data.total} imóve${data.total === 1 ? "l" : "is"}${filters.q ? ` para "${filters.q}"` : ""}`
               : "Buscando imóveis…"}
           </h2>
           <p className="text-text-secondary text-xs">
