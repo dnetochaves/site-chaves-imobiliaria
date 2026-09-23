@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { buildWhatsappHref } from "@/lib/whatsapp";
+
+const WHATSAPP_HREF = buildWhatsappHref(
+  "Quero anunciar meu imóvel para aluguel e gostaria de falar com alguém antes",
+);
 
 export function ListPropertyCta() {
   return (
@@ -17,7 +22,9 @@ export function ListPropertyCta() {
           <Link href="/anunciar">Anunciar imóvel</Link>
         </Button>
         <Button variant="outline" asChild>
-          <Link href="/falar-com-alguem">Falar com alguém</Link>
+          <a href={WHATSAPP_HREF} target="_blank" rel="noopener noreferrer">
+            Falar com alguém
+          </a>
         </Button>
       </div>
     </section>

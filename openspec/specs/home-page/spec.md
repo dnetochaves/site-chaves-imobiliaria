@@ -33,7 +33,7 @@ A Home SHALL exibir atalhos organizados por perfil de busca (ex.: morar sozinho,
 - **THEN** o sistema abre um canal de contato externo (ex.: link do WhatsApp) em vez de navegar para `/busca`
 
 ### Requirement: CTAs institucionais são links visíveis
-A Home SHALL exibir um bloco de CTA para o serviço de gestão de condomínios e um bloco de CTA para cadastro de imóvel para aluguel. Cada bloco SHALL exibir pelo menos dois elementos clicáveis (uma ação primária e uma ação secundária). O bloco de condomínios SHALL também exibir um resumo ilustrativo de dados de prestação de contas de um condomínio de exemplo.
+A Home SHALL exibir um bloco de CTA para o serviço de gestão de condomínios e um bloco de CTA para cadastro de imóvel para aluguel. Cada bloco SHALL exibir pelo menos dois elementos clicáveis (uma ação primária e uma ação secundária). O bloco de condomínios SHALL também exibir um resumo ilustrativo de dados de prestação de contas de um condomínio de exemplo. No bloco de cadastro de imóvel, a ação secundária ("Falar com alguém") SHALL abrir um canal de contato externo (ex.: WhatsApp) em vez de navegar para uma rota interna.
 
 #### Scenario: CTA de condomínios visível
 - **WHEN** um usuário acessa a Home
@@ -46,6 +46,10 @@ A Home SHALL exibir um bloco de CTA para o serviço de gestão de condomínios e
 #### Scenario: CTA de cadastro de imóvel visível
 - **WHEN** um usuário acessa a Home
 - **THEN** o bloco "Tem um imóvel para alugar?" está visível com uma ação primária (ex.: "Anunciar imóvel") e uma ação secundária (ex.: "Falar com alguém"), ambas clicáveis
+
+#### Scenario: Clicar em "Falar com alguém" abre o WhatsApp
+- **WHEN** um usuário clica na ação secundária "Falar com alguém" do bloco "Tem um imóvel para alugar?"
+- **THEN** o sistema abre uma conversa de WhatsApp com uma mensagem pré-preenchida, em vez de navegar para uma rota interna
 
 ### Requirement: Home exibe imóveis verificados pela administração
 A Home SHALL exibir uma seção com uma lista de imóveis marcados como verificados pela administração, incluindo um subtexto explicativo e um link para a listagem completa.
