@@ -63,6 +63,7 @@ export function PropertyCard({
             alt={title}
             fill
             className="object-cover"
+            unoptimized={!!imageUrl}
           />
         )}
         <span className="bg-background-inverse absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-medium text-white">

@@ -19,6 +19,7 @@ export type PropertyDisplayData = {
   petsAllowed: boolean;
   latitude: number | null;
   longitude: number | null;
+  imageUrl: string | undefined;
 };
 
 export function toPropertyDisplayData(imovel: ImovelSummary): PropertyDisplayData {
@@ -50,5 +51,6 @@ export function toPropertyDisplayData(imovel: ImovelSummary): PropertyDisplayDat
     petsAllowed: imovel.aceita_pets,
     latitude: Number.isNaN(latitude) ? null : latitude,
     longitude: Number.isNaN(longitude) ? null : longitude,
+    imageUrl: imovel.foto_capa ?? undefined,
   };
 }

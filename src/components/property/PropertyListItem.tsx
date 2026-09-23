@@ -53,6 +53,7 @@ export function PropertyListItem({
             alt={title}
             fill
             className="object-cover"
+            unoptimized={!!imageUrl}
           />
         )}
       </div>

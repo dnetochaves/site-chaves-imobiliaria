@@ -19,10 +19,11 @@ export function FavoritoItem({ favorito }: { favorito: FavoritoRead }) {
     <div className="flex flex-1 items-center gap-4">
       <div className="bg-background-muted relative h-20 w-20 shrink-0 overflow-hidden rounded-lg">
         <Image
-          src="/property-placeholder.svg"
+          src={display?.imageUrl ?? "/property-placeholder.svg"}
           alt={display?.title ?? `${unidade.rua}, ${unidade.numero}`}
           fill
           className="object-cover"
+          unoptimized={!!display?.imageUrl}
         />
       </div>
 
