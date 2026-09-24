@@ -7,9 +7,22 @@ import { useAuth } from "@/lib/auth/AuthContext";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
-  { label: "Imóveis", href: "/admin" },
-  { label: "Leads", href: "/admin/leads" },
+  { label: "Imóveis", href: "/admin", exact: ["/admin"], under: ["/admin/imoveis"] },
+  { label: "Leads", href: "/admin/leads", exact: [], under: ["/admin/leads"] },
+  { label: "Visitas", href: "/admin/visitas", exact: [], under: ["/admin/visitas"] },
 ];
+
+function isSectionActive(
+  pathname: string,
+  section: (typeof SECTIONS)[number],
+): boolean {
+  return (
+    section.exact.includes(pathname) ||
+    section.under.some(
+      (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+    )
+  );
+}
 
 export default function AdminLayout({
   children,
@@ -44,9 +57,9 @@ export default function AdminLayout({
         </h1>
       </div>
       <nav aria-label="Seções do painel" className="border-border-default flex gap-4 border-b">
-        {SECTIONS.map(({ label, href }) => {
-          const active =
-            href === "/admin" ? !pathname.startsWith("/admin/leads") : pathname.startsWith(href);
+        {SECTIONS.map((section) => {
+          const { label, href } = section;
+          const active = isSectionActive(pathname, section);
           return (
             <Link
               key={href}
