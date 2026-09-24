@@ -1,8 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
-import { notFound } from "next/navigation";
+import Link from "next/link";
+import { notFound, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { cn } from "@/lib/utils";
+
+const SECTIONS = [
+  { label: "Imóveis", href: "/admin" },
+  { label: "Leads", href: "/admin/leads" },
+];
 
 export default function AdminLayout({
   children,
@@ -10,6 +17,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { user, status, login } = useAuth();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (status === "unauthenticated") login();
@@ -35,6 +43,27 @@ export default function AdminLayout({
           Painel administrativo
         </h1>
       </div>
+      <nav aria-label="Seções do painel" className="border-border-default flex gap-4 border-b">
+        {SECTIONS.map(({ label, href }) => {
+          const active =
+            href === "/admin" ? !pathname.startsWith("/admin/leads") : pathname.startsWith(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={active ? "page" : undefined}
+              className={cn(
+                "-mb-px border-b-2 px-1 pb-2 text-sm font-medium transition-colors",
+                active
+                  ? "border-brand-primary text-text-primary"
+                  : "text-text-secondary hover:text-text-primary border-transparent",
+              )}
+            >
+              {label}
+            </Link>
+          );
+        })}
+      </nav>
       {children}
     </div>
   );
