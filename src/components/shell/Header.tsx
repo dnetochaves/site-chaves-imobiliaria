@@ -42,6 +42,14 @@ export function Header() {
               >
                 Favoritos
               </Link>
+              {user?.is_staff && (
+                <Link
+                  href="/admin"
+                  className="text-text-secondary hover:text-text-primary hidden text-sm font-medium transition-colors md:inline"
+                >
+                  Admin
+                </Link>
+              )}
               <span className="text-text-secondary hidden text-sm font-medium md:inline">
                 Olá, {user?.name ?? user?.email}
               </span>
