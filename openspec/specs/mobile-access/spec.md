@@ -31,7 +31,7 @@ Todas as páginas do site SHALL ser utilizáveis em telas com largura de 375px e
 - **THEN** a página não tem rolagem horizontal e nenhum texto, horário ou botão fica cortado na borda
 
 ### Requirement: Navegação e ações principais têm área de toque adequada
-Em telas estreitas, os elementos de navegação e as ações principais — links do header e do menu, ação de conta (entrar/sair), links do footer, o link "Ver todos" da Home, as abas de seção do painel administrativo, os botões de horário da seção de agendamento e as ações das visitas em Minhas visitas (abas, cancelar) — SHALL ter área de toque de pelo menos 44px de altura. Em telas largas, o tamanho desses elementos SHALL permanecer como antes.
+Em telas estreitas, os elementos de navegação e as ações principais — links do header e do menu, ação de conta (entrar/sair), links do footer, o link "Ver todos" da Home, as abas de seção do painel administrativo, os botões de horário da seção de agendamento, as ações das visitas em Minhas visitas (abas, cancelar) e as ações de concluir e cancelar da lista de visitas do painel administrativo — SHALL ter área de toque de pelo menos 44px de altura. Em telas largas, o tamanho desses elementos SHALL permanecer como antes.
 
 #### Scenario: Links do menu com área de toque
 - **WHEN** o menu de navegação está aberto em tela estreita
@@ -56,3 +56,7 @@ Em telas estreitas, os elementos de navegação e as ações principais — link
 #### Scenario: Horários e ações de visita com área de toque
 - **WHEN** um usuário vê os horários da página de um imóvel ou as visitas em Minhas visitas em tela estreita
 - **THEN** cada botão de horário, cada aba e o botão de cancelar visita têm pelo menos 44px de altura
+
+#### Scenario: Ações da lista de visitas do painel com área de toque
+- **WHEN** um usuário staff vê uma visita agendada na lista de visitas do painel em tela estreita
+- **THEN** os botões "Concluir" e "Cancelar" têm pelo menos 44px de altura

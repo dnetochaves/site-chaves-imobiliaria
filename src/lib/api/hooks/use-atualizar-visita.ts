@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api/client";
 import { toApiError } from "@/lib/api/errors";
 
@@ -12,6 +12,8 @@ function enviarAcao(acao: AcaoVisita, visitaId: number) {
 }
 
 export function useAtualizarVisita() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async ({
       acao,
@@ -23,6 +25,11 @@ export function useAtualizarVisita() {
       const { data, error, response } = await enviarAcao(acao, visitaId);
       if (error) throw toApiError(error, response);
       return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["visitas-staff"] });
+      queryClient.invalidateQueries({ queryKey: ["visitas-minhas"] });
+      queryClient.invalidateQueries({ queryKey: ["visitas-disponiveis"] });
     },
   });
 }

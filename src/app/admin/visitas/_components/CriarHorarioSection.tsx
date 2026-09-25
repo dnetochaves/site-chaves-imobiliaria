@@ -13,7 +13,8 @@ import { useCriarHorarioVisita } from "@/lib/api/hooks/use-criar-horario-visita"
 import { ApiError, describeApiError } from "@/lib/api/errors";
 import {
   VISITA_STATUS_OPTIONS,
-  formatVisitaDataHora,
+  formatDataHoraSalvador,
+  salvadorLocalParaIso,
 } from "@/lib/visita-labels";
 
 export function CriarHorarioSection() {
@@ -38,7 +39,7 @@ export function CriarHorarioSection() {
         Criar horário de visita
       </h2>
       <p className="text-text-secondary text-sm">
-        Informe o ID do imóvel, confira o endereço e escolha a data e a hora.
+        Informe o ID do imóvel, confira o endereço e escolha a data e a hora (horário de Salvador).
       </p>
 
       <form onSubmit={handleBuscar} className="flex items-end gap-2">
@@ -96,15 +97,15 @@ function HorarioForm({ imovelId }: { imovelId: number }) {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    const instante = new Date(dataHora);
-    if (!dataHora || Number.isNaN(instante.getTime())) {
+    const instante = dataHora ? salvadorLocalParaIso(dataHora) : null;
+    if (!instante) {
       setDataError(true);
       return;
     }
     setDataError(false);
     criar.mutate({
       unidade_id: unidade.id,
-      data_hora: instante.toISOString(),
+      data_hora: instante,
       observacoes: observacoes.trim() || undefined,
     });
   }
@@ -131,7 +132,9 @@ function HorarioForm({ imovelId }: { imovelId: number }) {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="horario-data-hora">Data e hora</Label>
+          <Label htmlFor="horario-data-hora">
+            Data e hora (horário de Salvador)
+          </Label>
           <Input
             id="horario-data-hora"
             type="datetime-local"
@@ -170,13 +173,13 @@ function HorarioForm({ imovelId }: { imovelId: number }) {
             Horário criado · Visita #{criar.data.id}
           </p>
           <p className="text-text-secondary">
-            {formatVisitaDataHora(criar.data.data_hora)} ·{" "}
+            {formatDataHoraSalvador(criar.data.data_hora)} ·{" "}
             {VISITA_STATUS_OPTIONS.find(
               (option) => option.value === criar.data.status,
             )?.label ?? criar.data.status}
           </p>
           <p className="text-text-secondary">
-            Guarde o ID da visita para cancelar ou concluir depois.
+            O horário aparece na lista de visitas com o filtro &ldquo;Disponíveis&rdquo;.
           </p>
         </div>
       )}

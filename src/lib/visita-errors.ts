@@ -80,3 +80,21 @@ export function describeCancelarError(error: unknown): string {
 
   return describeApiError(error, GENERICA_CANCELAR);
 }
+
+const GENERICA_CONCLUIR =
+  "Não foi possível concluir a visita agora. Tente novamente em instantes.";
+
+export function describeConcluirError(error: unknown): string {
+  if (!(error instanceof ApiError)) return GENERICA_CONCLUIR;
+
+  if (error.status === 400) {
+    return "Essa visita não pode ser concluída no estado atual.";
+  }
+  if (error.status === 403) return "Você não pode concluir essa visita.";
+  if (error.status === 404) return "Visita não encontrada.";
+  if (error.status === 401) {
+    return "Sua sessão expirou. Entre novamente para concluir.";
+  }
+
+  return describeApiError(error, GENERICA_CONCLUIR);
+}
