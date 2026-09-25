@@ -93,7 +93,7 @@ export function PropertyCard({
           </span>
         )}
 
-        <div className="text-text-secondary flex items-center gap-4 text-sm">
+        <div className="text-text-secondary flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
           <span className="flex items-center gap-1">
             <Ruler className="size-4" aria-hidden="true" />
             {areaLabel}

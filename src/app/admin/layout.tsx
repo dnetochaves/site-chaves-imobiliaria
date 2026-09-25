@@ -66,7 +66,7 @@ export default function AdminLayout({
               href={href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "-mb-px border-b-2 px-1 pb-2 text-sm font-medium transition-colors",
+                "-mb-px flex min-h-11 items-center border-b-2 px-1 text-sm font-medium transition-colors md:min-h-0 md:pb-2",
                 active
                   ? "border-brand-primary text-text-primary"
                   : "text-text-secondary hover:text-text-primary border-transparent",

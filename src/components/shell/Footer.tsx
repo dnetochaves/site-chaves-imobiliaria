@@ -53,12 +53,12 @@ export function Footer() {
               <h3 className="text-text-muted text-xs font-medium tracking-wide uppercase">
                 {column.title}
               </h3>
-              <ul className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-0 md:gap-2">
                 {column.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-text-secondary hover:text-text-primary text-sm transition-colors"
+                      className="text-text-secondary hover:text-text-primary inline-flex min-h-11 items-center text-sm transition-colors md:min-h-0"
                     >
                       {link.label}
                     </Link>

@@ -8,7 +8,7 @@ import Link from "next/link";
 // use-official-brand-logo.
 export function Logo() {
   return (
-    <Link href="/" className="flex items-center">
+    <Link href="/" className="flex min-h-11 items-center md:min-h-0">
       <svg
         viewBox="0 0 161 60"
         width={161}

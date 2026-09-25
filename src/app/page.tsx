@@ -22,7 +22,7 @@ export default function Home() {
           </div>
           <Link
             href="/busca"
-            className="text-text-primary hover:text-brand-primary text-sm font-medium whitespace-nowrap transition-colors"
+            className="text-text-primary hover:text-brand-primary inline-flex min-h-11 items-center text-sm font-medium whitespace-nowrap transition-colors md:min-h-0"
           >
             Ver todos →
           </Link>
