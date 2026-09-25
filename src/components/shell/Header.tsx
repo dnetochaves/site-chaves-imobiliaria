@@ -34,7 +34,10 @@ export function Header() {
 
   const accountLinks = [
     ...(status === "authenticated"
-      ? [{ label: "Favoritos", href: "/favoritos" }]
+      ? [
+          { label: "Favoritos", href: "/favoritos" },
+          { label: "Minhas visitas", href: "/minhas-visitas" },
+        ]
       : []),
     ...(status === "authenticated" && user?.is_staff
       ? [{ label: "Admin", href: "/admin" }]
@@ -52,7 +55,7 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-text-secondary hover:text-text-primary text-sm font-medium transition-colors"
+                className="text-text-secondary hover:text-text-primary text-sm font-medium whitespace-nowrap transition-colors"
               >
                 {link.label}
               </Link>
@@ -67,12 +70,12 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-text-secondary hover:text-text-primary hidden text-sm font-medium transition-colors md:inline"
+                  className="text-text-secondary hover:text-text-primary hidden text-sm font-medium whitespace-nowrap transition-colors md:inline"
                 >
                   {link.label}
                 </Link>
               ))}
-              <span className="text-text-secondary hidden text-sm font-medium md:inline">
+              <span className="text-text-secondary hidden text-sm font-medium whitespace-nowrap lg:inline">
                 Olá, {user?.name ?? user?.email}
               </span>
               <Button

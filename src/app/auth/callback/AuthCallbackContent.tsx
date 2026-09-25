@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { exchangeCode } from "@/lib/auth/api";
+import { consumeReturnTo } from "@/lib/auth/return-to";
 
 export function AuthCallbackContent() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export function AuthCallbackContent() {
           accessToken: tokenPair.access_token,
           refreshToken: tokenPair.refresh_token,
         });
-        router.replace("/");
+        router.replace(consumeReturnTo());
       } catch {
         setError("Não foi possível concluir o login. O código pode ter expirado.");
       }

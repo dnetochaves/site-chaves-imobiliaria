@@ -15,6 +15,7 @@ import {
   setTokens,
   type Tokens,
 } from "@/lib/auth/tokens";
+import { saveReturnTo } from "@/lib/auth/return-to";
 import {
   fetchCurrentUser,
   logoutSession,
@@ -79,6 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(() => {
+    saveReturnTo();
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- redirect cross-origin pro backend OAuth, não uma rota interna do Next
     window.location.href = `${env.apiBaseUrl}/auth/google/login`;
   }, []);

@@ -11,6 +11,7 @@ import { PropertyPriceSidebar } from "@/app/imoveis/[imovelId]/_components/Prope
 import { FavoriteButton } from "@/app/imoveis/[imovelId]/_components/FavoriteButton";
 import { ShareButton } from "@/app/imoveis/[imovelId]/_components/ShareButton";
 import { getAmenidadeIcon } from "@/app/imoveis/[imovelId]/_components/amenidadeIcons";
+import { AgendarVisitaSection } from "@/app/imoveis/[imovelId]/_components/AgendarVisitaSection";
 import { MapView } from "@/components/map/MapView";
 import { formatArea } from "@/lib/format";
 import { TIPO_OPTIONS } from "@/lib/property-types";
@@ -136,6 +137,11 @@ export default function ImovelDetailPage() {
             </h2>
             <p className="text-text-secondary text-sm">{imovel.descricao}</p>
           </div>
+
+          <AgendarVisitaSection
+            imovelId={imovel.id}
+            endereco={`${endereco} · ${unidade.bairro} · ${unidade.cidade}`}
+          />
 
           {imovel.amenidades.length > 0 && (
             <div className="flex flex-col gap-3">

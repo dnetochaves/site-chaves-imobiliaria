@@ -287,7 +287,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * List Visitas
+         * @description Staff-only: visits across all units, with the visitor's contact data.
+         */
+        get: operations["list_visitas_visitas_get"];
         put?: never;
         /**
          * Create Visita Slot
@@ -313,6 +317,26 @@ export interface paths {
          *     the next 48 hours (the Home page's "Selecionados para hoje" data).
          */
         get: operations["disponiveis_em_breve_visitas_disponiveis_em_breve_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visitas/minhas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Minhas Visitas
+         * @description The caller's own visits (never anyone else's), newest first.
+         */
+        get: operations["minhas_visitas_visitas_minhas_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -378,6 +402,27 @@ export interface paths {
          *     responsible user — never the visitor.
          */
         post: operations["concluir_visitas__visita_id__concluir_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/imoveis/{imovel_id}/visitas/disponiveis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Visitas Disponiveis Do Imovel
+         * @description Public: the free (available, future) viewing times of a published
+         *     listing, soonest first. `id` is the `visita_id` for `agendar`.
+         */
+        get: operations["visitas_disponiveis_do_imovel_imoveis__imovel_id__visitas_disponiveis_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -520,6 +565,150 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/corretores": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List All Corretores
+         * @description Staff-only: lists brokers, optionally filtered by `ativo`.
+         */
+        get: operations["list_all_corretores_corretores_get"];
+        put?: never;
+        /**
+         * Create Corretor
+         * @description Staff-only: registers a new broker. Rejects a CRECI registration
+         *     (number + state) that already belongs to a different broker.
+         */
+        post: operations["create_corretor_corretores_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/corretores/{corretor_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get One Corretor
+         * @description Staff-only: reads a single broker.
+         */
+        get: operations["get_one_corretor_corretores__corretor_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update One Corretor
+         * @description Staff-only: updates a broker's fields (only the ones supplied).
+         *     Rejects a CRECI registration that already belongs to a different broker.
+         */
+        patch: operations["update_one_corretor_corretores__corretor_id__patch"];
+        trace?: never;
+    };
+    "/corretores/{corretor_id}/desativar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Deactivate
+         * @description Staff-only: deactivates a broker. Any existing assignment of this
+         *     broker to a listing or a lead is left unchanged.
+         */
+        post: operations["deactivate_corretores__corretor_id__desativar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/corretores/{corretor_id}/reativar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reactivate
+         * @description Staff-only: reactivates a broker.
+         */
+        post: operations["reactivate_corretores__corretor_id__reativar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/corretores/{corretor_id}/imoveis/{imovel_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Assign Listing
+         * @description Staff-only: assigns an active broker to a listing, independent of
+         *     the listing's responsible user or approving staff member. Rejects an
+         *     inactive broker.
+         */
+        post: operations["assign_listing_corretores__corretor_id__imoveis__imovel_id__post"];
+        /**
+         * Unassign Listing
+         * @description Staff-only: removes this broker's assignment from a listing,
+         *     returning it to "not yet assigned" (a valid business state).
+         */
+        delete: operations["unassign_listing_corretores__corretor_id__imoveis__imovel_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/corretores/{corretor_id}/leads/{lead_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Assign Lead
+         * @description Staff-only: assigns an active broker to a lead. Manual only — never
+         *     reads or changes the lead's referenced unit or its listing (design.md
+         *     Decision 4). Rejects an inactive broker.
+         */
+        post: operations["assign_lead_corretores__corretor_id__leads__lead_id__post"];
+        /**
+         * Unassign Lead
+         * @description Staff-only: removes this broker's assignment from a lead.
+         */
+        delete: operations["unassign_lead_corretores__corretor_id__leads__lead_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -635,6 +824,77 @@ export interface components {
             /** Sindico Id */
             sindico_id: number | null;
         };
+        /**
+         * CorretorCreate
+         * @description Payload for registering a broker. `telefone` is required (the
+         *     primary commercial contact channel); everything else is optional.
+         */
+        CorretorCreate: {
+            /** Nome */
+            nome: string;
+            /** Telefone */
+            telefone: string;
+            /** Email */
+            email?: string | null;
+            /** Foto Url */
+            foto_url?: string | null;
+            /** Creci Numero */
+            creci_numero?: string | null;
+            /** Creci Uf */
+            creci_uf?: string | null;
+        };
+        /** CorretorRead */
+        CorretorRead: {
+            /** Id */
+            id: number;
+            /** Nome */
+            nome: string;
+            /** Telefone */
+            telefone: string;
+            /** Email */
+            email: string | null;
+            /** Foto Url */
+            foto_url: string | null;
+            /** Creci Numero */
+            creci_numero: string | null;
+            /** Creci Uf */
+            creci_uf: string | null;
+            /** Ativo */
+            ativo: boolean;
+        };
+        /**
+         * CorretorRef
+         * @description Minimal broker reference (id + name) embedded read-only in other
+         *     modules' schemas (`ImovelSummary`/`ImovelDetail` in `property_catalog`,
+         *     `LeadRead` in `lead_capture`) — only `broker_management`'s own
+         *     endpoints ever write an assignment.
+         */
+        CorretorRef: {
+            /** Id */
+            id: number;
+            /** Nome */
+            nome: string;
+        };
+        /**
+         * CorretorUpdate
+         * @description Partial update payload: only fields explicitly present in the
+         *     request are changed (`service.py` reads `model_dump(exclude_unset=True)`),
+         *     so omitting a field leaves it untouched instead of clearing it.
+         */
+        CorretorUpdate: {
+            /** Nome */
+            nome?: string | null;
+            /** Telefone */
+            telefone?: string | null;
+            /** Email */
+            email?: string | null;
+            /** Foto Url */
+            foto_url?: string | null;
+            /** Creci Numero */
+            creci_numero?: string | null;
+            /** Creci Uf */
+            creci_uf?: string | null;
+        };
         /** ErrorBody */
         ErrorBody: {
             /** Code */
@@ -672,6 +932,16 @@ export interface components {
             id: number;
             unidade: components["schemas"]["UnidadeRead"];
             imovel_atual?: components["schemas"]["ImovelSummary"] | null;
+        };
+        /**
+         * ImovelCorretorRead
+         * @description Confirms a listing's broker assignment after assigning/unassigning.
+         */
+        ImovelCorretorRead: {
+            /** Id */
+            id: number;
+            /** Corretor Id */
+            corretor_id: number | null;
         };
         /**
          * ImovelDetail
@@ -713,6 +983,8 @@ export interface components {
              * @description URL of the unit's first photo (lowest `ordem`); null when it has none.
              */
             foto_capa: string | null;
+            /** @description The broker (corretor) handling this listing commercially, independent of the responsible user or approving staff member; null when none is assigned. */
+            corretor?: components["schemas"]["CorretorRef"] | null;
             /** Descricao */
             descricao: string;
             /** Aprovado Por Id */
@@ -863,6 +1135,18 @@ export interface components {
              * @description URL of the unit's first photo (lowest `ordem`); null when it has none.
              */
             foto_capa: string | null;
+            /** @description The broker (corretor) handling this listing commercially, independent of the responsible user or approving staff member; null when none is assigned. */
+            corretor?: components["schemas"]["CorretorRef"] | null;
+        };
+        /**
+         * LeadCorretorRead
+         * @description Confirms a lead's broker assignment after assigning/unassigning.
+         */
+        LeadCorretorRead: {
+            /** Id */
+            id: number;
+            /** Corretor Id */
+            corretor_id: number | null;
         };
         /**
          * LeadCreate
@@ -910,6 +1194,8 @@ export interface components {
              */
             canal: string;
             status: components["schemas"]["LeadStatus"];
+            /** @description The broker (corretor) handling this lead, set independently of the lead's unit reference and never inferred from it; null when none is assigned. */
+            corretor?: components["schemas"]["CorretorRef"] | null;
         };
         /** LeadSearchResults */
         LeadSearchResults: {
@@ -944,6 +1230,31 @@ export interface components {
         LogoutRequest: {
             /** Refresh Token */
             refresh_token: string;
+        };
+        /** MinhaVisitaRead */
+        MinhaVisitaRead: {
+            /** Id */
+            id: number;
+            /**
+             * Data Hora
+             * Format: date-time
+             */
+            data_hora: string;
+            status: components["schemas"]["VisitaStatus"];
+            unidade: components["schemas"]["VisitaUnidadeRef"];
+            /** @description The unit's current published listing; null when it is no longer published. */
+            imovel: components["schemas"]["VisitaImovelRef"] | null;
+        };
+        /** MinhasVisitasResults */
+        MinhasVisitasResults: {
+            /** Items */
+            items: components["schemas"]["MinhaVisitaRead"][];
+            /** Total */
+            total: number;
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
         };
         /** PropertySearchResults */
         PropertySearchResults: {
@@ -1059,6 +1370,39 @@ export interface components {
             /** Is Staff */
             is_staff: boolean;
         };
+        /**
+         * VisitaBookingCreate
+         * @description Optional body of `agendar`: the visitor's contact data for this booking.
+         */
+        VisitaBookingCreate: {
+            /** Telefone */
+            telefone?: string | null;
+            /** Observacoes */
+            observacoes?: string | null;
+        };
+        /**
+         * VisitaDisponivelRead
+         * @description A free slot as the public sees it: identifier and time, nothing else.
+         */
+        VisitaDisponivelRead: {
+            /**
+             * Id
+             * @description The `visita_id` to pass to `POST /visitas/{visita_id}/agendar`.
+             */
+            id: number;
+            /**
+             * Data Hora
+             * Format: date-time
+             */
+            data_hora: string;
+        };
+        /** VisitaImovelRef */
+        VisitaImovelRef: {
+            /** Id */
+            id: number;
+            /** Titulo */
+            titulo: string;
+        };
         /** VisitaRead */
         VisitaRead: {
             /** Id */
@@ -1073,8 +1417,21 @@ export interface components {
             status: components["schemas"]["VisitaStatus"];
             /** Visitante Id */
             visitante_id: number | null;
-            /** Observacoes */
+            /**
+             * Observacoes
+             * @description The staff's note on the slot.
+             */
             observacoes: string | null;
+            /**
+             * Visitante Telefone
+             * @description Phone the visitor gave when booking.
+             */
+            visitante_telefone?: string | null;
+            /**
+             * Visitante Observacoes
+             * @description Note the visitor gave when booking.
+             */
+            visitante_observacoes?: string | null;
         };
         /**
          * VisitaSlotCreate
@@ -1086,16 +1443,82 @@ export interface components {
             /**
              * Data Hora
              * Format: date-time
+             * @description ISO 8601 instant with a UTC offset (e.g. `2026-10-01T14:00:00-03:00`); a time without an offset is rejected.
              */
             data_hora: string;
             /** Observacoes */
             observacoes?: string | null;
+        };
+        /** VisitaStaffRead */
+        VisitaStaffRead: {
+            /** Id */
+            id: number;
+            /**
+             * Data Hora
+             * Format: date-time
+             */
+            data_hora: string;
+            status: components["schemas"]["VisitaStatus"];
+            /**
+             * Observacoes
+             * @description The staff's note on the slot.
+             */
+            observacoes: string | null;
+            unidade: components["schemas"]["VisitaUnidadeRef"];
+            /** @description The unit's current published listing; null when there is none. */
+            imovel: components["schemas"]["VisitaImovelRef"] | null;
+            /** @description Null while the slot is not booked. */
+            visitante: components["schemas"]["VisitanteRef"] | null;
+            /** Visitante Telefone */
+            visitante_telefone: string | null;
+            /** Visitante Observacoes */
+            visitante_observacoes: string | null;
         };
         /**
          * VisitaStatus
          * @enum {string}
          */
         VisitaStatus: "disponivel" | "agendada" | "concluida" | "cancelada";
+        /**
+         * VisitaUnidadeRef
+         * @description The address of the physical unit a visit is on.
+         */
+        VisitaUnidadeRef: {
+            /** Id */
+            id: number;
+            /** Rua */
+            rua: string;
+            /** Numero */
+            numero: string;
+            /** Complemento */
+            complemento: string | null;
+            /** Bairro */
+            bairro: string;
+            /** Cidade */
+            cidade: string;
+            /** Estado */
+            estado: string;
+        };
+        /** VisitanteRef */
+        VisitanteRef: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string | null;
+            /** Email */
+            email: string;
+        };
+        /** VisitasStaffResults */
+        VisitasStaffResults: {
+            /** Items */
+            items: components["schemas"]["VisitaStaffRead"][];
+            /** Total */
+            total: number;
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+        };
     };
     responses: never;
     parameters: never;
@@ -2054,6 +2477,84 @@ export interface operations {
             };
         };
     };
+    list_visitas_visitas_get: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["VisitaStatus"] | null;
+                unidade_id?: number | null;
+                /** @description Resolved to its unit; an unknown listing gives an empty page. */
+                imovel_id?: number | null;
+                /** @description `data_hora` from (inclusive). */
+                de?: string | null;
+                /** @description `data_hora` up to (inclusive). */
+                ate?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitasStaffResults"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     create_visita_slot_visitas_post: {
         parameters: {
             query?: never;
@@ -2174,13 +2675,15 @@ export interface operations {
             };
         };
     };
-    agendar_visitas__visita_id__agendar_post: {
+    minhas_visitas_visitas_minhas_get: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                visita_id: number;
+            query?: {
+                status?: components["schemas"]["VisitaStatus"] | null;
+                limit?: number;
+                offset?: number;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -2191,7 +2694,80 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
+                    "application/json": components["schemas"]["MinhasVisitasResults"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    agendar_visitas__visita_id__agendar_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visita_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["VisitaBookingCreate"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
                     "application/json": components["schemas"]["VisitaRead"];
+                };
+            };
+            /** @description The slot cannot be booked */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
             /** @description Missing or invalid credentials */
@@ -2205,6 +2781,15 @@ export interface operations {
             };
             /** @description Resource not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The slot is taken or clashes with the user's own bookings */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2339,6 +2924,71 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    visitas_disponiveis_do_imovel_imoveis__imovel_id__visitas_disponiveis_get: {
+        parameters: {
+            query?: {
+                /** @description Window, in days from now. */
+                dias?: number;
+                /** @description Maximum number of slots. */
+                limite?: number;
+            };
+            header?: never;
+            path: {
+                imovel_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisitaDisponivelRead"][];
                 };
             };
             /** @description Resource not found */
@@ -2939,6 +3589,779 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CondominioFinanceiroRead"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_all_corretores_corretores_get: {
+        parameters: {
+            query?: {
+                /** @description Filters by active/inactive. */
+                ativo?: boolean | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorretorRead"][];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_corretor_corretores_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CorretorCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorretorRead"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_one_corretor_corretores__corretor_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                corretor_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorretorRead"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_one_corretor_corretores__corretor_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                corretor_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CorretorUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorretorRead"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deactivate_corretores__corretor_id__desativar_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                corretor_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorretorRead"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    reactivate_corretores__corretor_id__reativar_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                corretor_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorretorRead"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    assign_listing_corretores__corretor_id__imoveis__imovel_id__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                corretor_id: number;
+                imovel_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImovelCorretorRead"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    unassign_listing_corretores__corretor_id__imoveis__imovel_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                corretor_id: number;
+                imovel_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImovelCorretorRead"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    assign_lead_corretores__corretor_id__leads__lead_id__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                corretor_id: number;
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeadCorretorRead"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    unassign_lead_corretores__corretor_id__leads__lead_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                corretor_id: number;
+                lead_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LeadCorretorRead"];
                 };
             };
             /** @description Missing or invalid credentials */

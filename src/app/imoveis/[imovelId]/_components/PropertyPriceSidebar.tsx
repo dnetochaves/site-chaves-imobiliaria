@@ -67,11 +67,14 @@ export function PropertyPriceSidebar({ imovel }: { imovel: ImovelDetail }) {
       )}
 
       <div className="flex flex-col gap-2">
+        <Button asChild className="h-11 w-full md:h-8">
+          <a href="#agendar-visita">Agendar visita</a>
+        </Button>
         <ContactRequestDialog
           unidadeId={imovel.unidade.id}
           imovelTitulo={imovel.titulo}
         />
-        <Button asChild variant="outline" className="w-full">
+        <Button asChild variant="outline" className="h-11 w-full md:h-8">
           <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
             Falar com a Chaves
           </a>

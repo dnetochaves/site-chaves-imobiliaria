@@ -1,11 +1,4 @@
-# mobile-access Specification
-
-## Purpose
-
-Garante que o site inteiro, inclusive o painel administrativo, seja utilizável em telas de celular: sem rolagem horizontal, sem conteúdo cortado e com áreas de toque adequadas na navegação e nas ações principais.
-
-## Requirements
-
+## MODIFIED Requirements
 
 ### Requirement: Todas as páginas funcionam em telas estreitas
 Todas as páginas do site SHALL ser utilizáveis em telas com largura de 375px e de 320px, sem rolagem horizontal da página e sem conteúdo cortado nas bordas. Isso SHALL valer para: a Home (`/`), `/alugar`, `/comprar`, `/busca`, a página de um imóvel (`/imoveis/{id}`), `/anunciar`, `/favoritos`, `/minhas-visitas`, `/ajuda`, `/sobre`, `/garantia`, `/trabalhe-conosco`, o painel administrativo (`/admin`, `/admin/imoveis/{id}`, `/admin/leads`, `/admin/visitas`) e a página de "página não encontrada". Conteúdo mais largo que a tela SHALL quebrar linha ou se reorganizar, e só pode rolar horizontalmente dentro de um elemento próprio (como um mapa), nunca a página inteira.

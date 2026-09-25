@@ -51,7 +51,9 @@ export function ContactRequestDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="w-full">Agendar visita</Button>
+        <Button variant="outline" className="h-11 w-full md:h-8">
+          Pedir contato
+        </Button>
       </DialogTrigger>
       <DialogContent>
         {isSuccess ? (
