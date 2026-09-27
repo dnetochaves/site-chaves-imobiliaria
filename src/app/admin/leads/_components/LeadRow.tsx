@@ -16,11 +16,18 @@ import {
   type LeadStatus,
 } from "@/lib/lead-labels";
 import { buildLeadWhatsappHref } from "@/lib/whatsapp";
+import {
+  useAtribuirCorretorLead,
+  useRemoverCorretorLead,
+} from "@/lib/api/hooks/use-atribuir-corretor-lead";
+import { CorretorSeletor } from "@/app/admin/corretores/_components/CorretorSeletor";
 
 type Lead = components["schemas"]["LeadRead"];
 
 export function LeadRow({ lead }: { lead: Lead }) {
   const atualizar = useAtualizarStatusLead(lead.id);
+  const atribuirCorretor = useAtribuirCorretorLead();
+  const removerCorretor = useRemoverCorretorLead();
   const whatsappHref = buildLeadWhatsappHref(lead.telefone);
   const tipoLabel =
     LEAD_TIPO_OPTIONS.find((option) => option.value === lead.tipo)?.label ??
@@ -87,6 +94,24 @@ export function LeadRow({ lead }: { lead: Lead }) {
       {lead.contexto && (
         <p className="text-text-secondary text-sm">{lead.contexto}</p>
       )}
+
+      <CorretorSeletor
+        label={`Corretor do lead ${lead.id}`}
+        corretorAtual={lead.corretor ?? null}
+        pendente={atribuirCorretor.isPending || removerCorretor.isPending}
+        erro={atribuirCorretor.isError ? atribuirCorretor.error : removerCorretor.error}
+        onAtribuir={(corretorId) =>
+          atribuirCorretor.mutate({ corretorId, leadId: lead.id })
+        }
+        onRemover={() => {
+          if (lead.corretor) {
+            removerCorretor.mutate({
+              corretorId: lead.corretor.id,
+              leadId: lead.id,
+            });
+          }
+        }}
+      />
 
       {atualizar.isError && (
         <p className="text-feedback-error text-sm">

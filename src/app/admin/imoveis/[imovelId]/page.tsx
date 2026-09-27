@@ -12,6 +12,11 @@ import {
   type AcaoModeracao,
 } from "@/lib/api/hooks/use-moderar-imovel";
 import { describeApiError } from "@/lib/api/errors";
+import {
+  useAtribuirCorretorImovel,
+  useRemoverCorretorImovel,
+} from "@/lib/api/hooks/use-atribuir-corretor-imovel";
+import { CorretorSeletor } from "@/app/admin/corretores/_components/CorretorSeletor";
 
 const ACOES: { acao: AcaoModeracao; label: string }[] = [
   { acao: "aprovar", label: "Aprovar" },
@@ -24,6 +29,8 @@ export default function AdminImovelPage() {
   const imovelId = Number(params.imovelId);
   const { status, data: imovel, error } = useImovelDetail(imovelId);
   const moderar = useModerarImovel(imovelId);
+  const atribuirCorretor = useAtribuirCorretorImovel(imovelId);
+  const removerCorretor = useRemoverCorretorImovel(imovelId);
 
   const voltar = (
     <Link
@@ -120,6 +127,20 @@ export default function AdminImovelPage() {
             )}
           </p>
         )}
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h3 className="text-text-primary text-base font-semibold">Corretor</h3>
+        <CorretorSeletor
+          label="Corretor responsável pelo imóvel"
+          corretorAtual={imovel.corretor ?? null}
+          pendente={atribuirCorretor.isPending || removerCorretor.isPending}
+          erro={atribuirCorretor.isError ? atribuirCorretor.error : removerCorretor.error}
+          onAtribuir={(corretorId) => atribuirCorretor.mutate(corretorId)}
+          onRemover={() => {
+            if (imovel.corretor) removerCorretor.mutate(imovel.corretor.id);
+          }}
+        />
       </section>
     </div>
   );

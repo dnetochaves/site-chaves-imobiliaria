@@ -10,6 +10,7 @@ const SECTIONS = [
   { label: "Imóveis", href: "/admin", exact: ["/admin"], under: ["/admin/imoveis"] },
   { label: "Leads", href: "/admin/leads", exact: [], under: ["/admin/leads"] },
   { label: "Visitas", href: "/admin/visitas", exact: [], under: ["/admin/visitas"] },
+  { label: "Corretores", href: "/admin/corretores", exact: [], under: ["/admin/corretores"] },
 ];
 
 function isSectionActive(
