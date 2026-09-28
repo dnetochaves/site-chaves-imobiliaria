@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import type { components } from "@/lib/api/generated/schema";
 import {
@@ -59,6 +60,15 @@ export function CorretorLinha({ corretor }: { corretor: Corretor }) {
           onClick={() => alterarAtivo.mutate(corretor.id)}
         >
           {corretor.ativo ? "Desativar" : "Reativar"}
+        </Button>
+        <Button asChild variant="outline" className="h-11 md:h-8">
+          <Link
+            href={`/corretores/${corretor.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ver card público
+          </Link>
         </Button>
       </div>
 

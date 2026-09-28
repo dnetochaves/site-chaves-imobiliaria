@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -80,11 +81,25 @@ function CorretorFormularioCampos({
   const [fotoUrl, setFotoUrl] = useState(corretor?.foto_url ?? "");
   const [creciNumero, setCreciNumero] = useState(corretor?.creci_numero ?? "");
   const [creciUf, setCreciUf] = useState(corretor?.creci_uf ?? "");
+  const [bio, setBio] = useState(corretor?.bio ?? "");
+  const [cidade, setCidade] = useState(corretor?.cidade ?? "");
+  const [instagram, setInstagram] = useState(
+    corretor?.redes_sociais?.instagram ?? "",
+  );
+  const [linkedin, setLinkedin] = useState(
+    corretor?.redes_sociais?.linkedin ?? "",
+  );
+  const [slug, setSlug] = useState(corretor?.slug ?? "");
   const [camposFaltando, setCamposFaltando] = useState(false);
 
   const criar = useCriarCorretor();
   const atualizar = useAtualizarCorretor(corretor?.id ?? 0);
   const mutacaoAtual = corretor ? atualizar : criar;
+
+  const creciAlterado =
+    creciNumero.trim() !== (corretor?.creci_numero ?? "") ||
+    creciUf !== (corretor?.creci_uf ?? "");
+  const slugAlterado = corretor !== null && slug.trim() !== corretor.slug;
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -94,26 +109,53 @@ function CorretorFormularioCampos({
     }
     setCamposFaltando(false);
 
-    const payload = {
-      nome: nome.trim(),
-      telefone: telefone.trim(),
-      email: email.trim() || null,
-      foto_url: fotoUrl.trim() || null,
-      creci_numero: creciNumero.trim() || null,
-      creci_uf: creciUf || null,
-    };
+    const redesSociais =
+      instagram.trim() || linkedin.trim()
+        ? { instagram: instagram.trim() || null, linkedin: linkedin.trim() || null }
+        : null;
 
     if (corretor) {
-      atualizar.mutate(payload, { onSuccess: onSalvo });
+      atualizar.mutate(
+        {
+          nome: nome.trim(),
+          telefone: telefone.trim(),
+          email: email.trim() || null,
+          foto_url: fotoUrl.trim() || null,
+          creci_numero: creciNumero.trim() || null,
+          creci_uf: creciUf || null,
+          bio: bio.trim() || null,
+          cidade: cidade.trim() || null,
+          redes_sociais: redesSociais,
+          slug: slug.trim(),
+        },
+        { onSuccess: onSalvo },
+      );
     } else {
-      criar.mutate(payload, { onSuccess: onSalvo });
+      criar.mutate(
+        {
+          nome: nome.trim(),
+          telefone: telefone.trim(),
+          email: email.trim() || null,
+          foto_url: fotoUrl.trim() || null,
+          creci_numero: creciNumero.trim() || null,
+          creci_uf: creciUf || null,
+          bio: bio.trim() || null,
+          cidade: cidade.trim() || null,
+          redes_sociais: redesSociais,
+        },
+        { onSuccess: onSalvo },
+      );
     }
   }
 
   const erro = mutacaoAtual.isError
-    ? describeCorretorError(mutacaoAtual.error)
+    ? describeCorretorError(mutacaoAtual.error, {
+        creci: creciAlterado,
+        slug: slugAlterado,
+      })
     : null;
   const erroNoCreci = erro?.campo === "creci";
+  const erroNoSlug = erro?.campo === "slug";
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -194,6 +236,59 @@ function CorretorFormularioCampos({
           </Select>
         </div>
       </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="corretor-cidade">Cidade / região de atuação (opcional)</Label>
+        <Input
+          id="corretor-cidade"
+          value={cidade}
+          maxLength={120}
+          onChange={(e) => setCidade(e.target.value)}
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="corretor-bio">Bio (opcional)</Label>
+        <Textarea
+          id="corretor-bio"
+          rows={3}
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+        />
+      </div>
+
+      <div className="flex gap-2">
+        <div className="flex flex-1 flex-col gap-1.5">
+          <Label htmlFor="corretor-instagram">Instagram (opcional)</Label>
+          <Input
+            id="corretor-instagram"
+            value={instagram}
+            onChange={(e) => setInstagram(e.target.value)}
+          />
+        </div>
+        <div className="flex flex-1 flex-col gap-1.5">
+          <Label htmlFor="corretor-linkedin">LinkedIn (opcional)</Label>
+          <Input
+            id="corretor-linkedin"
+            value={linkedin}
+            onChange={(e) => setLinkedin(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {corretor && (
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="corretor-slug">
+            Slug (URL pública: /corretores/{slug || "…"})
+          </Label>
+          <Input
+            id="corretor-slug"
+            value={slug}
+            aria-invalid={erroNoSlug}
+            onChange={(e) => setSlug(e.target.value)}
+          />
+        </div>
+      )}
 
       {camposFaltando && (
         <p className="text-feedback-error text-sm">

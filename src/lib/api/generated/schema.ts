@@ -142,6 +142,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api-keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Keys
+         * @description Never includes a key's hash or raw secret - only non-secret
+         *     identifying information (`key_prefix`).
+         */
+        get: operations["list_keys_api_keys_get"];
+        put?: never;
+        /**
+         * Create Key
+         * @description Issues a new API key. `raw_key` in the response is the only time the
+         *     secret is ever shown - it is never persisted and no other endpoint can
+         *     return it again.
+         */
+        post: operations["create_key_api_keys_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api-keys/{api_key_id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Revoke Key
+         * @description One-directional (design.md Decision 7): there is no endpoint, here or
+         *     anywhere else, that un-revokes a key.
+         */
+        post: operations["revoke_key_api_keys__api_key_id__revoke_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/imoveis": {
         parameters: {
             query?: never;
@@ -590,6 +638,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/corretores/publico/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Public Broker
+         * @description Fully public: no authentication, not even optional (design.md
+         *     Decision 5 — placed right after the staff-only list for readability,
+         *     since it's this module's one auth-free route; a 3-segment path with the
+         *     literal `publico` cannot collide with `GET /{corretor_id}`).
+         *
+         *     An unknown slug and the slug of a deactivated broker answer the exact
+         *     same 404 with the same `error.code` (design.md Decision 7) — a
+         *     deactivated broker's former slug must not be distinguishable from one
+         *     that never existed.
+         */
+        get: operations["get_public_broker_corretores_publico__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/corretores/{corretor_id}": {
         parameters: {
             query?: never;
@@ -733,6 +809,79 @@ export interface components {
             icone: string | null;
         };
         /**
+         * ApiKeyCreate
+         * @description Payload to issue a new API key for a service account (created on
+         *     first use if `service_account_slug` is not already known).
+         *
+         *     `expires_at` is required and capped server-side at 365 days out
+         *     (`service.API_KEY_MAX_EXPIRY_DAYS`) - there is no "never expires" option.
+         *     A naive datetime (no UTC offset) is rejected rather than silently assumed
+         *     to be UTC, same convention as `VisitaSlotCreate.data_hora`.
+         */
+        ApiKeyCreate: {
+            /** Service Account Slug */
+            service_account_slug: string;
+            /** Label */
+            label: string;
+            /**
+             * Expires At
+             * Format: date-time
+             * @description ISO 8601 instant with a UTC offset; a time without one is rejected.
+             */
+            expires_at: string;
+        };
+        /**
+         * ApiKeyCreated
+         * @description The one and only response that ever carries the raw secret.
+         */
+        ApiKeyCreated: {
+            /** Id */
+            id: number;
+            /** Label */
+            label: string;
+            /** Key Prefix */
+            key_prefix: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Raw Key */
+            raw_key: string;
+        };
+        /**
+         * ApiKeyRead
+         * @description Never includes the hash or the raw secret - only `key_prefix` is
+         *     shown for identification, per the spec's "secret is never retrievable
+         *     again" requirement.
+         */
+        ApiKeyRead: {
+            /** Id */
+            id: number;
+            /** User Id */
+            user_id: number;
+            /** Label */
+            label: string;
+            /** Key Prefix */
+            key_prefix: string;
+            /**
+             * Expires At
+             * Format: date-time
+             */
+            expires_at: string;
+            /** Revoked */
+            revoked: boolean;
+            /** Last Used At */
+            last_used_at: string | null;
+            /** Created By User Id */
+            created_by_user_id: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
          * CondominioCreate
          * @description Payload for registering a condominium. `sindico_id`, if given, must
          *     reference a staff-designated user (validated in `service.py`).
@@ -828,6 +977,8 @@ export interface components {
          * CorretorCreate
          * @description Payload for registering a broker. `telefone` is required (the
          *     primary commercial contact channel); everything else is optional.
+         *     `slug` is never accepted here — it is always derived from `nome`
+         *     (design.md Decision 1).
          */
         CorretorCreate: {
             /** Nome */
@@ -842,13 +993,52 @@ export interface components {
             creci_numero?: string | null;
             /** Creci Uf */
             creci_uf?: string | null;
+            /** Bio */
+            bio?: string | null;
+            /** Cidade */
+            cidade?: string | null;
+            redes_sociais?: components["schemas"]["RedesSociais"] | null;
         };
-        /** CorretorRead */
+        /**
+         * CorretorPublicoRead
+         * @description The public, purpose-built broker profile (`GET /corretores/publico/{slug}`).
+         *
+         *     Deliberately lean: exactly the fields meant for public display — never
+         *     `id`, never `ativo`, never timestamps (design.md's working field list).
+         */
+        CorretorPublicoRead: {
+            /** Nome */
+            nome: string;
+            /** Foto Url */
+            foto_url: string | null;
+            /** Telefone */
+            telefone: string;
+            /** Email */
+            email: string | null;
+            /** Bio */
+            bio: string | null;
+            /** Cidade */
+            cidade: string | null;
+            /** Creci Numero */
+            creci_numero: string | null;
+            /** Creci Uf */
+            creci_uf: string | null;
+            redes_sociais: components["schemas"]["RedesSociais"] | null;
+            /** Slug */
+            slug: string;
+        };
+        /**
+         * CorretorRead
+         * @description Staff-only broker read shape — never returned to an anonymous
+         *     caller (`CorretorPublicoRead` is the lean, public counterpart).
+         */
         CorretorRead: {
             /** Id */
             id: number;
             /** Nome */
             nome: string;
+            /** Slug */
+            slug: string;
             /** Telefone */
             telefone: string;
             /** Email */
@@ -859,31 +1049,46 @@ export interface components {
             creci_numero: string | null;
             /** Creci Uf */
             creci_uf: string | null;
+            /** Bio */
+            bio: string | null;
+            /** Cidade */
+            cidade: string | null;
+            redes_sociais: components["schemas"]["RedesSociais"] | null;
             /** Ativo */
             ativo: boolean;
         };
         /**
          * CorretorRef
-         * @description Minimal broker reference (id + name) embedded read-only in other
-         *     modules' schemas (`ImovelSummary`/`ImovelDetail` in `property_catalog`,
-         *     `LeadRead` in `lead_capture`) — only `broker_management`'s own
-         *     endpoints ever write an assignment.
+         * @description Minimal broker reference (id + name + slug) embedded read-only in
+         *     other modules' schemas (`ImovelSummary`/`ImovelDetail` in
+         *     `property_catalog`, `LeadRead` in `lead_capture`) — only
+         *     `broker_management`'s own endpoints ever write an assignment. `slug`
+         *     lets a listing's/lead's page link straight to the broker's public
+         *     profile (design.md Decision 8).
          */
         CorretorRef: {
             /** Id */
             id: number;
             /** Nome */
             nome: string;
+            /** Slug */
+            slug: string;
         };
         /**
          * CorretorUpdate
          * @description Partial update payload: only fields explicitly present in the
          *     request are changed (`service.py` reads `model_dump(exclude_unset=True)`),
          *     so omitting a field leaves it untouched instead of clearing it.
+         *
+         *     `slug`, if present, is re-normalized with `_slugify` before the
+         *     uniqueness check (design.md Decision 1); changing `nome` alone never
+         *     touches an existing `slug`.
          */
         CorretorUpdate: {
             /** Nome */
             nome?: string | null;
+            /** Slug */
+            slug?: string | null;
             /** Telefone */
             telefone?: string | null;
             /** Email */
@@ -894,6 +1099,11 @@ export interface components {
             creci_numero?: string | null;
             /** Creci Uf */
             creci_uf?: string | null;
+            /** Bio */
+            bio?: string | null;
+            /** Cidade */
+            cidade?: string | null;
+            redes_sociais?: components["schemas"]["RedesSociais"] | null;
         };
         /** ErrorBody */
         ErrorBody: {
@@ -1274,6 +1484,18 @@ export interface components {
          * @enum {string}
          */
         PropertyType: "apartamento" | "casa" | "cobertura" | "studio" | "kitnet" | "terreno" | "comercial" | "outro";
+        /**
+         * RedesSociais
+         * @description A broker's social links (design.md Decision 2): a small, fixed,
+         *     display-only set, validated with explicit fields rather than
+         *     `extra="allow"` — an unrecognized key is rejected, not silently accepted.
+         */
+        RedesSociais: {
+            /** Instagram */
+            instagram?: string | null;
+            /** Linkedin */
+            linkedin?: string | null;
+        };
         /** RefreshRequest */
         RefreshRequest: {
             /** Refresh Token */
@@ -1849,6 +2071,213 @@ export interface operations {
             };
             /** @description Missing or invalid credentials */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_keys_api_keys_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiKeyRead"][];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_key_api_keys_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApiKeyCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiKeyCreated"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    revoke_key_api_keys__api_key_id__revoke_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                api_key_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiKeyRead"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3752,6 +4181,66 @@ export interface operations {
             };
             /** @description Staff privileges required */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_public_broker_corretores_publico__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorretorPublicoRead"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

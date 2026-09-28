@@ -4,19 +4,36 @@ const GENERICA_CADASTRO =
   "Não foi possível salvar o corretor agora. Tente novamente em instantes.";
 
 /**
- * Erro do formulário de criar/editar corretor. O 409 de CRECI duplicado vira
- * um campo próprio (`campo: "creci"`), pra ser exibido junto dos inputs de
- * CRECI em vez de como mensagem genérica do formulário.
+ * Erro do formulário de criar/editar corretor. A API responde 409 tanto pra
+ * CRECI duplicado quanto pra slug duplicado, sem indicar qual — por isso
+ * quem chama informa quais desses dois campos foram alterados nesta
+ * submissão (`camposAlterados`), pra associar o erro ao campo certo. Quando
+ * os dois mudaram (ou nenhum, caso inesperado), a mensagem cobre as duas
+ * possibilidades sem apontar um campo específico.
  */
 export function describeCorretorError(
   error: unknown,
-): { mensagem: string; campo?: "creci" } {
+  camposAlterados: { creci?: boolean; slug?: boolean } = {},
+): { mensagem: string; campo?: "creci" | "slug" } {
   if (!(error instanceof ApiError)) return { mensagem: GENERICA_CADASTRO };
 
   if (error.status === 409) {
+    const { creci, slug } = camposAlterados;
+    if (slug && !creci) {
+      return {
+        mensagem: "Esse slug já está em uso por outro corretor.",
+        campo: "slug",
+      };
+    }
+    if (creci && !slug) {
+      return {
+        mensagem: "Já existe um corretor com este CRECI nesta UF.",
+        campo: "creci",
+      };
+    }
     return {
-      mensagem: "Já existe um corretor com este CRECI nesta UF.",
-      campo: "creci",
+      mensagem:
+        "Já existe um corretor com este CRECI ou com este slug. Confira os dois campos.",
     };
   }
 

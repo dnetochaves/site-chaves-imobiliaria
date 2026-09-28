@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";
 import { buildWhatsappHref } from "@/lib/whatsapp";
@@ -80,6 +81,18 @@ export function PropertyPriceSidebar({ imovel }: { imovel: ImovelDetail }) {
           </a>
         </Button>
       </div>
+
+      {imovel.corretor && (
+        <p className="text-text-secondary border-border-default border-t pt-4 text-sm">
+          Corretor responsável:{" "}
+          <Link
+            href={`/corretores/${imovel.corretor.slug}`}
+            className="text-brand-primary font-medium hover:underline"
+          >
+            {imovel.corretor.nome}
+          </Link>
+        </p>
+      )}
 
       {imovel.administrado_pela_chaves && (
         <div className="bg-brand-secondary-subtle rounded-lg p-4 text-sm">
