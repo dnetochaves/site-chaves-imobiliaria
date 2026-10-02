@@ -2,33 +2,22 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
   useImovelDetail,
   ImovelNaoEncontradoError,
 } from "@/lib/api/hooks/use-imovel-detail";
-import {
-  useModerarImovel,
-  type AcaoModeracao,
-} from "@/lib/api/hooks/use-moderar-imovel";
 import { describeApiError } from "@/lib/api/errors";
+import { formatImovelStatus } from "@/lib/imovel-labels";
 import {
   useAtribuirCorretorImovel,
   useRemoverCorretorImovel,
 } from "@/lib/api/hooks/use-atribuir-corretor-imovel";
 import { CorretorSeletor } from "@/app/admin/corretores/_components/CorretorSeletor";
 
-const ACOES: { acao: AcaoModeracao; label: string }[] = [
-  { acao: "aprovar", label: "Aprovar" },
-  { acao: "pausar", label: "Pausar" },
-  { acao: "rejeitar", label: "Rejeitar" },
-];
-
 export default function AdminImovelPage() {
   const params = useParams<{ imovelId: string }>();
   const imovelId = Number(params.imovelId);
   const { status, data: imovel, error } = useImovelDetail(imovelId);
-  const moderar = useModerarImovel(imovelId);
   const atribuirCorretor = useAtribuirCorretorImovel(imovelId);
   const removerCorretor = useRemoverCorretorImovel(imovelId);
 
@@ -37,7 +26,7 @@ export default function AdminImovelPage() {
       href="/admin"
       className="text-brand-primary text-sm font-medium hover:underline"
     >
-      ← Voltar ao painel
+      ← Voltar à lista de imóveis
     </Link>
   );
 
@@ -89,7 +78,7 @@ export default function AdminImovelPage() {
             #{imovel.id} · {imovel.titulo}
           </h2>
           <span className="bg-background-muted text-text-secondary rounded-full px-2.5 py-0.5 text-xs">
-            {imovel.status}
+            {formatImovelStatus(imovel.status)}
           </span>
         </div>
         <p className="text-text-secondary text-sm">
@@ -102,31 +91,6 @@ export default function AdminImovelPage() {
         >
           Ver página pública do imóvel
         </Link>
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <h3 className="text-text-primary text-base font-semibold">Moderação</h3>
-        <div className="flex flex-wrap gap-2">
-          {ACOES.map(({ acao, label }) => (
-            <Button
-              key={acao}
-              type="button"
-              variant={acao === "aprovar" ? "default" : "outline"}
-              disabled={moderar.isPending}
-              onClick={() => moderar.mutate(acao)}
-            >
-              {label}
-            </Button>
-          ))}
-        </div>
-        {moderar.isError && (
-          <p className="text-feedback-error text-sm">
-            {describeApiError(
-              moderar.error,
-              "Não foi possível executar a ação. Ela pode não ser permitida para o status atual deste imóvel.",
-            )}
-          </p>
-        )}
       </section>
 
       <section className="flex flex-col gap-3">

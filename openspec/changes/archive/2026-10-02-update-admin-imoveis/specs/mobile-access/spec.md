@@ -1,38 +1,4 @@
-# mobile-access Specification
-
-## Purpose
-
-Garante que o site inteiro, inclusive o painel administrativo, seja utilizável em telas de celular: sem rolagem horizontal, sem conteúdo cortado e com áreas de toque adequadas na navegação e nas ações principais.
-
-## Requirements
-
-
-### Requirement: Todas as páginas funcionam em telas estreitas
-Todas as páginas do site SHALL ser utilizáveis em telas com largura de 375px e de 320px, sem rolagem horizontal da página e sem conteúdo cortado nas bordas. Isso SHALL valer para: a Home (`/`), `/alugar`, `/comprar`, `/busca`, a página de um imóvel (`/imoveis/{id}`), a página pública de um corretor (`/corretores/{slug}`), `/anunciar`, `/favoritos`, `/minhas-visitas`, `/ajuda`, `/sobre`, `/garantia`, `/trabalhe-conosco`, o painel administrativo (`/admin`, `/admin/imoveis/{id}`, `/admin/leads`, `/admin/visitas`, `/admin/corretores`) e a página de "página não encontrada". Conteúdo mais largo que a tela SHALL quebrar linha ou se reorganizar, e só pode rolar horizontalmente dentro de um elemento próprio (como um mapa), nunca a página inteira.
-
-#### Scenario: Páginas públicas sem rolagem horizontal
-- **WHEN** um usuário abre qualquer página pública listada em tela de 375px ou de 320px
-- **THEN** a página não tem rolagem horizontal e nenhum texto ou ícone fica cortado na borda
-
-#### Scenario: Páginas do painel sem rolagem horizontal
-- **WHEN** um usuário staff abre qualquer página do painel administrativo em tela de 375px ou de 320px
-- **THEN** a página não tem rolagem horizontal e nenhum texto ou controle fica cortado na borda
-
-#### Scenario: Cards de imóvel em tela estreita
-- **WHEN** um card de imóvel é exibido em tela de 375px ou de 320px
-- **THEN** a linha de métricas (área, quartos, banheiros e vagas) quebra linha quando não cabe, sem ser cortada pela borda do card
-
-#### Scenario: Página não encontrada em tela estreita
-- **WHEN** um usuário abre uma rota inexistente em tela estreita
-- **THEN** a página de "página não encontrada" é exibida sem rolagem horizontal, com o header e o menu funcionando
-
-#### Scenario: Agendamento e Minhas visitas em tela estreita
-- **WHEN** um usuário vê a seção de horários da página de um imóvel (com a lista de horários e o formulário de reserva abertos) ou a página Minhas visitas em tela de 375px ou de 320px
-- **THEN** a página não tem rolagem horizontal e nenhum texto, horário ou botão fica cortado na borda
-
-#### Scenario: Card público do corretor em tela estreita
-- **WHEN** um visitante abre a página pública de um corretor em tela de 375px ou de 320px
-- **THEN** a página não tem rolagem horizontal e nenhum dado ou ação de contato fica cortado na borda
+## MODIFIED Requirements
 
 ### Requirement: Navegação e ações principais têm área de toque adequada
 Em telas estreitas, os elementos de navegação e as ações principais — links do header e do menu, ação de conta (entrar/sair), links do footer, o link "Ver todos" da Home, as abas de seção do painel administrativo, os botões de horário da seção de agendamento, as ações das visitas em Minhas visitas (abas, cancelar), as ações de concluir e cancelar da lista de visitas do painel administrativo, as ações de desativar/reativar da lista de corretores do painel administrativo, as ações de contato e compartilhar do card público do corretor e as ações de publicação (aprovar, pausar, rejeitar, republicar) da lista de imóveis do painel administrativo — SHALL ter área de toque de pelo menos 44px de altura. Em telas largas, o tamanho desses elementos SHALL permanecer como antes.

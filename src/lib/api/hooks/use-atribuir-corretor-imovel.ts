@@ -22,6 +22,7 @@ export function useAtribuirCorretorImovel(imovelId: number) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["imovel", imovelId] });
       queryClient.invalidateQueries({ queryKey: ["imoveis"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-imoveis"] });
     },
   });
 }
@@ -41,6 +42,7 @@ export function useRemoverCorretorImovel(imovelId: number) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["imovel", imovelId] });
       queryClient.invalidateQueries({ queryKey: ["imoveis"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-imoveis"] });
     },
   });
 }

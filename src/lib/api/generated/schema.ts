@@ -224,7 +224,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Approve */
+        /**
+         * Approve
+         * @description `em_analise` to `publicado`; records the approving staff member and time.
+         */
         post: operations["approve_imoveis__imovel_id__aprovar_post"];
         delete?: never;
         options?: never;
@@ -241,7 +244,10 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Pause */
+        /**
+         * Pause
+         * @description `publicado` to `pausado`. Booked visits on the unit stay booked, untouched.
+         */
         post: operations["pause_imoveis__imovel_id__pausar_post"];
         delete?: never;
         options?: never;
@@ -258,8 +264,33 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Reject */
+        /**
+         * Reject
+         * @description `em_analise` to `removido`.
+         */
         post: operations["reject_imoveis__imovel_id__rejeitar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/imoveis/{imovel_id}/republicar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Republish
+         * @description `pausado` to `publicado`, keeping the original approver and approval time.
+         *     Refused with `unidade_ja_tem_anuncio_ativo` when the unit has another listing
+         *     pending review or published.
+         */
+        post: operations["republish_imoveis__imovel_id__republicar_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -279,6 +310,27 @@ export interface paths {
          *     their responsible user or staff.
          */
         get: operations["get_detail_imoveis__imovel_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/imoveis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Admin List Listings
+         * @description Staff-only: listings of any status, each with the actions currently allowed
+         *     on it and the number of future booked visits on its physical unit.
+         */
+        get: operations["admin_list_listings_admin_imoveis_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -799,6 +851,25 @@ export interface components {
              */
             token_type: string;
         };
+        /**
+         * AdminListingOrdering
+         * @description Orderings of the staff list. Deliberately has no `recentes`: on the public
+         *     search that means "most recently approved", which is empty for the listings
+         *     staff most need to review.
+         * @enum {string}
+         */
+        AdminListingOrdering: "criacao_desc" | "criacao_asc" | "preco_asc" | "preco_desc";
+        /** AdminListingResults */
+        AdminListingResults: {
+            /** Items */
+            items: components["schemas"]["ImovelAdminRead"][];
+            /** Total */
+            total: number;
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+        };
         /** AmenidadeRead */
         AmenidadeRead: {
             /** Id */
@@ -1144,6 +1215,64 @@ export interface components {
             imovel_atual?: components["schemas"]["ImovelSummary"] | null;
         };
         /**
+         * ImovelAdminRead
+         * @description A listing in the staff list: the summary plus what the screen needs to act.
+         */
+        ImovelAdminRead: {
+            /** Id */
+            id: number;
+            /** Titulo */
+            titulo: string;
+            status: components["schemas"]["ImovelStatus"];
+            /** Disponivel Aluguel */
+            disponivel_aluguel: boolean;
+            /** Disponivel Venda */
+            disponivel_venda: boolean;
+            /** Mobiliado */
+            mobiliado: boolean;
+            /** Aceita Pets */
+            aceita_pets: boolean;
+            /** Verificado */
+            verificado: boolean;
+            /** Valor Aluguel */
+            valor_aluguel: string | null;
+            /** Valor Condominio */
+            valor_condominio: string | null;
+            /** Valor Iptu */
+            valor_iptu: string | null;
+            /** Valor Seguro Incendio */
+            valor_seguro_incendio: string | null;
+            /** Valor Total Mensal */
+            valor_total_mensal: string | null;
+            /** Valor Venda */
+            valor_venda: string | null;
+            /** Responsavel Id */
+            responsavel_id: number;
+            unidade: components["schemas"]["UnidadeRead"];
+            /**
+             * Foto Capa
+             * @description URL of the unit's first photo (lowest `ordem`); null when it has none.
+             */
+            foto_capa: string | null;
+            /** @description The broker (corretor) handling this listing commercially, independent of the responsible user or approving staff member; null when none is assigned. */
+            corretor?: components["schemas"]["CorretorRef"] | null;
+            /**
+             * Acoes Permitidas
+             * @description The actions the system would accept on this listing right now, and none it would refuse.
+             */
+            acoes_permitidas: components["schemas"]["ListingAction"][];
+            /**
+             * Visitas Agendadas Futuras Na Unidade
+             * @description Future booked visits of the listing's physical unit (visits belong to the unit, not to a listing), so the team can be warned before pausing.
+             */
+            visitas_agendadas_futuras_na_unidade: number;
+            /**
+             * Criado Em
+             * Format: date-time
+             */
+            criado_em: string;
+        };
+        /**
          * ImovelCorretorRead
          * @description Confirms a listing's broker assignment after assigning/unassigning.
          */
@@ -1436,6 +1565,13 @@ export interface components {
          * @enum {string}
          */
         LeadTipo: "simulacao_financiamento" | "contato_imovel" | "proposta_condominio" | "anunciar_imovel" | "outro";
+        /**
+         * ListingAction
+         * @description A status action staff can apply to a listing. Which status each one is valid
+         *     from, and where it leads, is `TRANSITIONS` in `service.py`.
+         * @enum {string}
+         */
+        ListingAction: "aprovar" | "pausar" | "rejeitar" | "republicar";
         /** LogoutRequest */
         LogoutRequest: {
             /** Refresh Token */
@@ -2458,6 +2594,15 @@ export interface operations {
                     "application/json": components["schemas"]["ImovelDetail"];
                 };
             };
+            /** @description The listing's status does not allow this action */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Missing or invalid credentials */
             401: {
                 headers: {
@@ -2534,6 +2679,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ImovelDetail"];
+                };
+            };
+            /** @description The listing's status does not allow this action */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
             /** @description Missing or invalid credentials */
@@ -2614,6 +2768,15 @@ export interface operations {
                     "application/json": components["schemas"]["ImovelDetail"];
                 };
             };
+            /** @description The listing's status does not allow this action */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Missing or invalid credentials */
             401: {
                 headers: {
@@ -2634,6 +2797,102 @@ export interface operations {
             };
             /** @description Resource not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    republish_imoveis__imovel_id__republicar_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                imovel_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImovelDetail"];
+                };
+            };
+            /** @description The listing's status does not allow this action */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The unit already has another listing pending review or published */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2694,6 +2953,88 @@ export interface operations {
             };
             /** @description Resource not found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    admin_list_listings_admin_imoveis_get: {
+        parameters: {
+            query?: {
+                /** @description Repeatable (`status=pausado&status=em_analise`); omitted means every status. */
+                status?: components["schemas"]["ImovelStatus"][] | null;
+                /** @description Only listings assigned to this broker. */
+                corretor_id?: number | null;
+                /** @description Only listings with no assigned broker. Cannot be combined with `corretor_id`. */
+                sem_corretor?: boolean;
+                /** @description Free text, by the same rule as the public search: every word must appear (case-insensitive, accent-sensitive) in the title, description, street, neighborhood, city or condominium name. */
+                q?: string | null;
+                disponivel_aluguel?: boolean | null;
+                disponivel_venda?: boolean | null;
+                /** @description Price orderings use the monthly total (the sale price for a sale-only `disponivel_venda` filter); listings without it sort last. */
+                ordenar?: components["schemas"]["AdminListingOrdering"];
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminListingResults"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
