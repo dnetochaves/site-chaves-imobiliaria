@@ -30,6 +30,7 @@ import {
   describeImovelAcaoError,
 } from "@/lib/imovel-errors";
 import { formatDataHoraSalvador } from "@/lib/visita-labels";
+import type { ComEnderecoCodigo } from "@/lib/api/endereco";
 
 type ImovelAdmin = components["schemas"]["ImovelAdminRead"];
 
@@ -51,6 +52,7 @@ export function ImovelAdminLinha({ imovel }: { imovel: ImovelAdmin }) {
   const remover = useRemoverCorretorImovel(imovel.id);
 
   const { unidade } = imovel;
+  const codigo = (imovel as ImovelAdmin & ComEnderecoCodigo).codigo;
   const acoes = ACOES_ORDEM.filter(
     (acao) => imovel.acoes_permitidas.some((valor) => isAcaoConhecida(valor) && valor === acao),
   );
@@ -103,6 +105,11 @@ export function ImovelAdminLinha({ imovel }: { imovel: ImovelAdmin }) {
           <span className="text-text-secondary text-xs">
             {unidade.bairro} · {unidade.cidade}/{unidade.estado}
           </span>
+          {codigo && (
+            <span className="text-text-secondary text-xs">
+              Código interno: {codigo}
+            </span>
+          )}
           <span className="text-text-secondary text-xs">
             Cadastrado em {formatDataHoraSalvador(imovel.criado_em)}
           </span>

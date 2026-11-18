@@ -27,11 +27,7 @@ const SORT_OPTIONS = [
   { value: "recentes", label: "Mais recentes" },
 ];
 
-export type SearchResultsListProps = {
-  onHoverItem?: (id: number | null) => void;
-};
-
-export function SearchResultsList({ onHoverItem }: SearchResultsListProps) {
+export function SearchResultsList() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const filters = parseFilters(searchParams);
@@ -105,15 +101,13 @@ export function SearchResultsList({ onHoverItem }: SearchResultsListProps) {
 
       {status === "success" && data.items.length > 0 && (
         <>
-          <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
             {data.items.map((imovel) => {
               const item = toPropertyDisplayData(imovel);
               return (
                 <PropertyListItem
                   key={item.id}
                   {...item}
-                  onMouseEnter={() => onHoverItem?.(item.id)}
-                  onMouseLeave={() => onHoverItem?.(null)}
                 />
               );
             })}

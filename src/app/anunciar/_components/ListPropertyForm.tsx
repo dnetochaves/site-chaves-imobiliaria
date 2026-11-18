@@ -20,7 +20,8 @@ import {
   type GeocodeResult,
 } from "@/lib/api/hooks/use-geocode-address";
 import { useCreateImovel } from "@/lib/api/hooks/use-create-imovel";
-import { describeApiError } from "@/lib/api/errors";
+import { ApiError, describeApiError } from "@/lib/api/errors";
+import { useAuth } from "@/lib/auth/AuthContext";
 import { TIPO_OPTIONS, type PropertyType } from "@/lib/property-types";
 
 function addressKey(fields: {
@@ -40,6 +41,8 @@ export function ListPropertyForm() {
   const [cidade, setCidade] = useState("");
   const [estado, setEstado] = useState("");
   const [cep, setCep] = useState("");
+  const [observacoes, setObservacoes] = useState("");
+  const [codigo, setCodigo] = useState("");
 
   const [areaUtilM2, setAreaUtilM2] = useState("");
   const [quartos, setQuartos] = useState("0");
@@ -70,9 +73,13 @@ export function ListPropertyForm() {
   } | null>(null);
   const [operationError, setOperationError] = useState(false);
 
+  const { user } = useAuth();
   const geocode = useGeocodeAddress();
   const createImovel = useCreateImovel();
 
+  const codigoEmUso =
+    createImovel.error instanceof ApiError &&
+    createImovel.error.code === "codigo_ja_em_uso";
   const currentKey = addressKey({ rua, numero, bairro, cidade });
   const isGeocodeConfirmed = confirmedGeocode?.key === currentKey;
   const showGeocodeResult = geocodedKey === currentKey;
@@ -102,23 +109,22 @@ export function ListPropertyForm() {
     }
     setOperationError(false);
 
-    if (!isGeocodeConfirmed || !confirmedGeocode) return;
-
     const fotoUrls = fotoUrlsText
       .split(/[\n,]/)
       .map((url) => url.trim())
       .filter(Boolean);
 
     createImovel.mutate({
-      rua,
-      numero,
-      complemento: complemento || undefined,
+      // Campo vazio conta como não informado; só bairro, cidade e estado são o mínimo.
+      rua: rua.trim() || undefined,
+      numero: numero.trim() || undefined,
+      complemento: complemento.trim() || undefined,
       bairro,
       cidade,
       estado,
-      cep,
-      latitude: confirmedGeocode.result.latitude,
-      longitude: confirmedGeocode.result.longitude,
+      cep: cep.trim() || undefined,
+      latitude: isGeocodeConfirmed ? confirmedGeocode?.result.latitude : undefined,
+      longitude: isGeocodeConfirmed ? confirmedGeocode?.result.longitude : undefined,
       area_util_m2: areaUtilM2,
       quartos: Number(quartos) || 0,
       banheiros: Number(banheiros) || 0,
@@ -141,6 +147,8 @@ export function ListPropertyForm() {
           : undefined,
       valor_venda: disponivelVenda && valorVenda ? valorVenda : undefined,
       foto_urls: fotoUrls.length > 0 ? fotoUrls : undefined,
+      observacoes: observacoes.trim() || undefined,
+      codigo: user?.is_staff ? codigo.trim() || undefined : undefined,
     });
   }
 
@@ -163,23 +171,28 @@ export function ListPropertyForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-8">
       <section className="flex flex-col gap-4">
-        <h2 className="text-text-primary text-lg font-semibold">Endereço</h2>
+        <h2 className="text-text-primary text-lg font-semibold">
+          Localização
+        </h2>
+        <p className="text-text-secondary text-sm">
+          No site aparecem apenas o bairro e a cidade. Rua, número e CEP são
+          opcionais e ficam visíveis só para a equipe e para quem tem visita
+          agendada.
+        </p>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_1fr]">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="rua">Rua</Label>
+            <Label htmlFor="rua">Rua (opcional)</Label>
             <Input
               id="rua"
-              required
               value={rua}
               onChange={(e) => setRua(e.target.value)}
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="numero">Número</Label>
+            <Label htmlFor="numero">Número (opcional)</Label>
             <Input
               id="numero"
-              required
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
             />
@@ -228,10 +241,9 @@ export function ListPropertyForm() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="cep">CEP</Label>
+          <Label htmlFor="cep">CEP (opcional)</Label>
           <Input
             id="cep"
-            required
             value={cep}
             onChange={(e) => setCep(e.target.value)}
           />
@@ -243,9 +255,9 @@ export function ListPropertyForm() {
             variant="outline"
             onClick={handleSearchAddress}
             loading={geocode.isPending}
-            disabled={!rua || !numero || !bairro || !cidade}
+            disabled={!rua.trim() || !numero.trim() || !bairro || !cidade}
           >
-            Buscar endereço
+            Buscar endereço no mapa (opcional)
           </Button>
 
           {showGeocodeResult && geocode.isSuccess && geocode.data === null && (
@@ -422,6 +434,34 @@ export function ListPropertyForm() {
             onChange={(e) => setDescricao(e.target.value)}
           />
         </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="observacoes">Observações (opcional)</Label>
+          <Textarea
+            id="observacoes"
+            rows={2}
+            value={observacoes}
+            onChange={(e) => setObservacoes(e.target.value)}
+          />
+          <p className="text-text-secondary text-xs">
+            Nota exibida na página do imóvel.
+          </p>
+        </div>
+        {user?.is_staff && (
+          <div className="flex flex-col gap-1.5 sm:w-60">
+            <Label htmlFor="codigo">Código interno (opcional)</Label>
+            <Input
+              id="codigo"
+              value={codigo}
+              aria-invalid={codigoEmUso}
+              onChange={(e) => setCodigo(e.target.value)}
+            />
+            {codigoEmUso && (
+              <p className="text-feedback-error text-sm">
+                Esse código já está em uso por outro anúncio ativo.
+              </p>
+            )}
+          </div>
+        )}
       </section>
 
       <section className="flex flex-col gap-4">
@@ -485,7 +525,7 @@ export function ListPropertyForm() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="valorSeguro">Seguro incêndio (R$)</Label>
+              <Label htmlFor="valorSeguro">Seguro incêndio (R$, opcional)</Label>
               <Input
                 id="valorSeguro"
                 type="number"
@@ -527,7 +567,7 @@ export function ListPropertyForm() {
         />
       </section>
 
-      {createImovel.isError && (
+      {createImovel.isError && !codigoEmUso && (
         <p className="text-feedback-error text-sm">
           {describeApiError(
             createImovel.error,
@@ -538,18 +578,9 @@ export function ListPropertyForm() {
       )}
 
       <div className="flex flex-col gap-2">
-        <Button
-          type="submit"
-          loading={createImovel.isPending}
-          disabled={!isGeocodeConfirmed}
-        >
+        <Button type="submit" loading={createImovel.isPending}>
           Cadastrar imóvel
         </Button>
-        {!isGeocodeConfirmed && (
-          <p className="text-text-secondary text-xs">
-            Busque e confirme o endereço antes de enviar.
-          </p>
-        )}
       </div>
     </form>
   );

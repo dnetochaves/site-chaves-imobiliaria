@@ -22,13 +22,9 @@ type Horario = { id: number; data_hora: string };
 
 type AgendarVisitaSectionProps = {
   imovelId: number;
-  endereco: string;
 };
 
-export function AgendarVisitaSection({
-  imovelId,
-  endereco,
-}: AgendarVisitaSectionProps) {
+export function AgendarVisitaSection({ imovelId }: AgendarVisitaSectionProps) {
   const { status: authStatus, login } = useAuth();
   const { status, data: horarios, error } = useVisitasDisponiveis(imovelId);
   const agendar = useAgendarVisita(imovelId);
@@ -123,7 +119,10 @@ export function AgendarVisitaSection({
         >
           <p className="text-text-primary font-semibold">Visita agendada!</p>
           <p className="text-text-secondary">
-            {formatDataHoraSalvador(confirmada)} · {endereco}
+            {formatDataHoraSalvador(confirmada)}
+          </p>
+          <p className="text-text-secondary">
+            O endereço completo fica disponível em Minhas visitas.
           </p>
           <Link
             href="/minhas-visitas"

@@ -7,7 +7,7 @@ Define o comportamento observável da tela de Busca (`/busca`) — onde o usuár
 ## Requirements
 
 ### Requirement: Filtros de busca refinam os resultados
-A tela de Busca SHALL exibir um campo de busca por texto (que refina por título, descrição, rua, bairro, cidade e nome do condomínio), filtros de operação (aluguel/compra), faixa de preço e número de quartos, além de um controle para expor filtros adicionais (mobiliado, aceita pets, tipo de imóvel, cidade, quartos mínimo, vagas mínimo, área mínima). Alterar qualquer filtro SHALL atualizar a lista de resultados exibida.
+A tela de Busca SHALL exibir um campo de busca por texto (que refina por título, descrição, bairro, cidade e nome do condomínio — a rua não faz parte da busca), filtros de operação (aluguel/compra), faixa de preço e número de quartos, além de um controle para expor filtros adicionais (mobiliado, aceita pets, tipo de imóvel, cidade, quartos mínimo, vagas mínimo, área mínima). Alterar qualquer filtro SHALL atualizar a lista de resultados exibida.
 
 #### Scenario: Alterar um filtro atualiza os resultados
 - **WHEN** um usuário altera o filtro de quartos (ex.: de "qualquer" para "2 quartos")
@@ -19,11 +19,15 @@ A tela de Busca SHALL exibir um campo de busca por texto (que refina por título
 
 #### Scenario: Buscar por texto livre
 - **WHEN** um usuário digita um termo no campo de busca principal (ex.: uma característica do imóvel, não só um nome de bairro)
-- **THEN** a lista de resultados exibe imóveis cujo título, descrição, rua, bairro, cidade ou nome do condomínio contenha o termo buscado
+- **THEN** a lista de resultados exibe imóveis cujo título, descrição, bairro, cidade ou nome do condomínio contenha o termo buscado
 
 #### Scenario: Refinar por tipo, cidade, quartos mínimo, vagas mínimo ou área mínima
 - **WHEN** um usuário define um dos filtros adicionais (tipo de imóvel, cidade, quartos mínimo, vagas mínimo, área mínima) no painel de mais filtros
 - **THEN** a lista de resultados é atualizada para exibir apenas imóveis que atendem a esse critério, combinado com os demais filtros ativos
+
+#### Scenario: Texto de ajuda do campo de busca
+- **WHEN** a tela de Busca (ou a busca da Home) exibe o campo de texto
+- **THEN** o texto de ajuda do campo cita bairro, cidade ou condomínio e não menciona rua
 
 ### Requirement: Filtros iniciais vêm da URL
 A tela de Busca SHALL ler os parâmetros de busca presentes na URL ao carregar a página (ex.: `local`, `operacao`, `bairro`, `quartos`, `aceita_pets`) e usá-los como filtros iniciais, refletidos tanto na UI dos filtros quanto na busca disparada.
@@ -49,14 +53,3 @@ A tela de Busca SHALL prover uma forma de ordenar os resultados (ex.: por menor 
 #### Scenario: Trocar a ordenação
 - **WHEN** um usuário seleciona um critério de ordenação diferente
 - **THEN** a lista de resultados é reordenada de acordo com o critério escolhido
-
-### Requirement: Mapa exibe os imóveis com preço e sincroniza com a lista
-A tela de Busca SHALL exibir um mapa com um marcador por imóvel resultante da busca, mostrando o preço em cada marcador. Passar o cursor sobre um card da lista SHALL destacar visualmente o marcador correspondente no mapa.
-
-#### Scenario: Marcadores exibem preço
-- **WHEN** a busca retorna imóveis com coordenadas válidas
-- **THEN** o mapa exibe um marcador por imóvel, cada um mostrando o preço correspondente
-
-#### Scenario: Hover na lista destaca o mapa
-- **WHEN** um usuário passa o cursor sobre um card de imóvel na lista
-- **THEN** o marcador correspondente a esse imóvel é destacado visualmente no mapa

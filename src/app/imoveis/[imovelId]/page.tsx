@@ -12,7 +12,6 @@ import { FavoriteButton } from "@/app/imoveis/[imovelId]/_components/FavoriteBut
 import { ShareButton } from "@/components/ShareButton";
 import { getAmenidadeIcon } from "@/app/imoveis/[imovelId]/_components/amenidadeIcons";
 import { AgendarVisitaSection } from "@/app/imoveis/[imovelId]/_components/AgendarVisitaSection";
-import { MapView } from "@/components/map/MapView";
 import { formatArea } from "@/lib/format";
 import { TIPO_OPTIONS } from "@/lib/property-types";
 
@@ -57,10 +56,6 @@ export default function ImovelDetailPage() {
   }
 
   const { unidade } = imovel;
-  const latitude = Number(unidade.latitude);
-  const longitude = Number(unidade.longitude);
-  const hasCoordinates = !Number.isNaN(latitude) && !Number.isNaN(longitude);
-  const endereco = `${unidade.rua}, ${unidade.numero}${unidade.complemento ? ` - ${unidade.complemento}` : ""}`;
   const propertyTypeLabel =
     TIPO_OPTIONS.find((option) => option.value === unidade.tipo)?.label ??
     null;
@@ -74,9 +69,7 @@ export default function ImovelDetailPage() {
         <span aria-hidden="true">/</span>
         <span>{unidade.cidade}</span>
         <span aria-hidden="true">/</span>
-        <span>{unidade.bairro}</span>
-        <span aria-hidden="true">/</span>
-        <span className="text-text-primary">{endereco}</span>
+        <span className="text-text-primary">{unidade.bairro}</span>
       </nav>
 
       <PropertyGallery fotos={imovel.fotos} title={imovel.titulo} />
@@ -103,7 +96,6 @@ export default function ImovelDetailPage() {
                 <FavoriteButton unidade={unidade} />
               </div>
             </div>
-            <p className="text-text-secondary text-sm">{endereco}</p>
 
             <div className="border-border-default text-text-primary mt-2 flex items-center gap-6 border-t border-b py-4 text-sm">
               <div>
@@ -138,10 +130,7 @@ export default function ImovelDetailPage() {
             <p className="text-text-secondary text-sm">{imovel.descricao}</p>
           </div>
 
-          <AgendarVisitaSection
-            imovelId={imovel.id}
-            endereco={`${endereco} · ${unidade.bairro} · ${unidade.cidade}`}
-          />
+          <AgendarVisitaSection imovelId={imovel.id} />
 
           {imovel.amenidades.length > 0 && (
             <div className="flex flex-col gap-3">
@@ -162,20 +151,6 @@ export default function ImovelDetailPage() {
                   );
                 })}
               </div>
-            </div>
-          )}
-
-          {hasCoordinates && (
-            <div className="flex flex-col gap-3">
-              <h2 className="text-text-primary text-lg font-semibold">
-                Onde fica
-              </h2>
-              <MapView
-                center={[longitude, latitude]}
-                zoom={15}
-                markers={[{ id: unidade.id, center: [longitude, latitude] }]}
-                className="bg-background-muted h-64 w-full rounded-xl"
-              />
             </div>
           )}
         </div>

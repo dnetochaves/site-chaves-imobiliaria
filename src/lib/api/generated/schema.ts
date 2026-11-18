@@ -205,8 +205,10 @@ export interface paths {
         put?: never;
         /**
          * Create Listing
-         * @description Submits a new listing for review. Reuses the caller's existing
-         *     physical unit on an exact address match, creates one otherwise.
+         * @description Submits a new listing for review. Reuses the caller's existing physical unit
+         *     on an exact street-and-number match, creates one otherwise (always, when the
+         *     submission has no street and number). Refused with `codigo_ja_em_uso` when the
+         *     internal code belongs to another listing pending review or published.
          */
         post: operations["create_listing_imoveis_post"];
         delete?: never;
@@ -288,7 +290,8 @@ export interface paths {
          * Republish
          * @description `pausado` to `publicado`, keeping the original approver and approval time.
          *     Refused with `unidade_ja_tem_anuncio_ativo` when the unit has another listing
-         *     pending review or published.
+         *     pending review or published, and with `codigo_ja_em_uso` when the listing's code
+         *     was taken meanwhile by another one.
          */
         post: operations["republish_imoveis__imovel_id__republicar_post"];
         delete?: never;
@@ -1326,6 +1329,11 @@ export interface components {
             corretor?: components["schemas"]["CorretorRef"] | null;
             /** Descricao */
             descricao: string;
+            /**
+             * Observacoes
+             * @description A customer-facing note; absent from search results.
+             */
+            observacoes?: string | null;
             /** Aprovado Por Id */
             aprovado_por_id: number | null;
             /** Fotos */
@@ -1353,15 +1361,17 @@ export interface components {
          * ImovelSubmissionCreate
          * @description Payload for submitting a new listing.
          *
-         *     Address/physical fields describe the `Unidade` (reused if an exact
-         *     match already exists for this user, created otherwise per design.md
-         *     Decision 2); the rest describe the `Imovel` (the commercial offer).
+         *     Address/physical fields describe the `Unidade` (reused when the submission has
+         *     a street and a number and an exact match already exists for this user, created
+         *     otherwise per design.md Decision 2); the rest describe the `Imovel` (the
+         *     commercial offer). Street, number, postal code and coordinates are optional: a
+         *     submission without a street and a number always creates a new unit.
          */
         ImovelSubmissionCreate: {
             /** Rua */
-            rua: string;
+            rua?: string | null;
             /** Numero */
-            numero: string;
+            numero?: string | null;
             /** Complemento */
             complemento?: string | null;
             /** Bairro */
@@ -1371,11 +1381,11 @@ export interface components {
             /** Estado */
             estado: string;
             /** Cep */
-            cep: string;
+            cep?: string | null;
             /** Latitude */
-            latitude: number | string;
+            latitude?: number | string | null;
             /** Longitude */
-            longitude: number | string;
+            longitude?: number | string | null;
             /** Area Util M2 */
             area_util_m2: number | string;
             /**
@@ -1425,10 +1435,23 @@ export interface components {
             valor_condominio?: number | string | null;
             /** Valor Iptu */
             valor_iptu?: number | string | null;
-            /** Valor Seguro Incendio */
+            /**
+             * Valor Seguro Incendio
+             * @description Optional; counted as 0 in `valor_total_mensal` when omitted.
+             */
             valor_seguro_incendio?: number | string | null;
             /** Valor Venda */
             valor_venda?: number | string | null;
+            /**
+             * Codigo
+             * @description Internal code issued by Chaves. Stored trimmed and in uppercase (blank means none); unique among listings pending review or published.
+             */
+            codigo?: string | null;
+            /**
+             * Observacoes
+             * @description A customer-facing note, shown in the public listing detail.
+             */
+            observacoes?: string | null;
             /** Foto Urls */
             foto_urls?: string[];
             /** Amenidade Ids */
@@ -1680,14 +1703,19 @@ export interface components {
              */
             proxima_visita_em: string;
         };
-        /** UnidadeRead */
+        /**
+         * UnidadeRead
+         * @description The unit as every response carries it today. Street, number, postal code and
+         *     coordinates are nullable because a listing may be registered without them; removing
+         *     them from public responses is a separate step (listing-text-import group 2).
+         */
         UnidadeRead: {
             /** Id */
             id: number;
             /** Rua */
-            rua: string;
+            rua: string | null;
             /** Numero */
-            numero: string;
+            numero: string | null;
             /** Complemento */
             complemento: string | null;
             /** Bairro */
@@ -1697,11 +1725,11 @@ export interface components {
             /** Estado */
             estado: string;
             /** Cep */
-            cep: string;
+            cep: string | null;
             /** Latitude */
-            latitude: string;
+            latitude: string | null;
             /** Longitude */
-            longitude: string;
+            longitude: string | null;
             /** Area Util M2 */
             area_util_m2: string;
             /** Quartos */
@@ -1845,9 +1873,9 @@ export interface components {
             /** Id */
             id: number;
             /** Rua */
-            rua: string;
+            rua: string | null;
             /** Numero */
-            numero: string;
+            numero: string | null;
             /** Complemento */
             complemento: string | null;
             /** Bairro */
@@ -2543,6 +2571,15 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description The unit already has another listing pending review or published, or the code belongs to one */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
             /** @description Validation error */
             422: {
                 headers: {
@@ -2891,7 +2928,7 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description The unit already has another listing pending review or published */
+            /** @description The unit already has another listing pending review or published, or the listing's code was taken by one */
             409: {
                 headers: {
                     [name: string]: unknown;

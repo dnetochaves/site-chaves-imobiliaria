@@ -41,7 +41,7 @@ export const DEFAULT_FILTERS: SearchFiltersState = {
 
 /**
  * Lê os filtros a partir da URL. "q" é o campo de busca por texto amplo
- * (título, descrição, rua, bairro, cidade, condomínio — ver design.md do
+ * (título, descrição, bairro, cidade, condomínio — a rua não entra na busca pública; ver design.md do
  * change add-search-filters). "local" (form de busca da Home) e "bairro"
  * (chips/atalhos da Home, change add-search-page) continuam aceitos como
  * sinônimos de entrada, mas só como valor inicial: a partir daqui a URL da

@@ -19,8 +19,6 @@ export type PropertyDisplayData = {
   furnished: boolean;
   petsAllowed: boolean;
   propertyType: string | null;
-  latitude: number | null;
-  longitude: number | null;
   imageUrl: string | undefined;
 };
 
@@ -30,9 +28,6 @@ export function toPropertyDisplayData(imovel: ImovelSummary): PropertyDisplayDat
     ? imovel.valor_aluguel
     : imovel.valor_venda;
   const priceValue = rawPrice ? Number(rawPrice) : null;
-
-  const latitude = Number(imovel.unidade.latitude);
-  const longitude = Number(imovel.unidade.longitude);
 
   return {
     id: imovel.id,
@@ -54,8 +49,6 @@ export function toPropertyDisplayData(imovel: ImovelSummary): PropertyDisplayDat
     propertyType:
       TIPO_OPTIONS.find((option) => option.value === imovel.unidade.tipo)
         ?.label ?? null,
-    latitude: Number.isNaN(latitude) ? null : latitude,
-    longitude: Number.isNaN(longitude) ? null : longitude,
     imageUrl: imovel.foto_capa ?? undefined,
   };
 }

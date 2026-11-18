@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { components } from "@/lib/api/generated/schema";
 import { Button } from "@/components/ui/button";
+import { formatLocalizacaoCompleta, lerEndereco } from "@/lib/api/endereco";
 import {
   Dialog,
   DialogContent,
@@ -47,7 +48,7 @@ export function VisitaLinha({ visita }: { visita: VisitaStaff }) {
   const atualizar = useAtualizarVisita();
 
   const { unidade, imovel, visitante } = visita;
-  const endereco = `${unidade.rua}, ${unidade.numero}${unidade.complemento ? ` - ${unidade.complemento}` : ""} · ${unidade.bairro} · ${unidade.cidade}/${unidade.estado}`;
+  const endereco = formatLocalizacaoCompleta(lerEndereco({ unidade }), unidade);
   const statusLabel =
     VISITA_STATUS_OPTIONS.find((option) => option.value === visita.status)
       ?.label ?? visita.status;

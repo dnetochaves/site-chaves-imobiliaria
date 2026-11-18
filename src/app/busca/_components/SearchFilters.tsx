@@ -61,7 +61,7 @@ export function SearchFilters() {
             onKeyDown={(e) => {
               if (e.key === "Enter") applyFilters({ q: qInput });
             }}
-            placeholder="Bairro, rua, condomínio..."
+            placeholder="Bairro, cidade, condomínio..."
             className="pl-9"
           />
         </div>

@@ -18,15 +18,23 @@ O sistema SHALL exigir que o usuário esteja autenticado para ver a página "Min
 - **THEN** o sistema inicia o fluxo de login, sem exibir a página, e o usuário volta para `/minhas-visitas` depois de entrar
 
 ### Requirement: Página lista as visitas do usuário
-A página SHALL listar apenas as visitas do usuário autenticado, da mais recente para a mais antiga, com abas "Próximas" (visitas agendadas) e "Todas". Cada visita SHALL mostrar a data e hora (no horário de Salvador), o status em português (disponível, agendada, concluída ou cancelada) e o endereço. Quando o anúncio do imóvel ainda existe, a visita SHALL mostrar o título com um link para a página do imóvel; quando o anúncio não existe mais (pausado ou removido), SHALL mostrar apenas o endereço, sem link. A lista SHALL ser paginada quando houver mais visitas do que cabem em uma página.
+A página SHALL listar apenas as visitas do usuário autenticado, da mais recente para a mais antiga, com abas "Próximas" (visitas agendadas) e "Todas". Cada visita SHALL mostrar a data e hora (no horário de Salvador), o status em português (disponível, agendada, concluída ou cancelada) e a localização (bairro e cidade). O endereço completo (rua, número e complemento) SHALL ser exibido somente enquanto a visita está agendada e o imóvel tem endereço informado; visitas canceladas ou concluídas SHALL NOT exibir o endereço completo, e uma visita agendada de um imóvel sem endereço informado SHALL indicar que o endereço fica disponível após o agendamento. Quando o anúncio do imóvel ainda existe, a visita SHALL mostrar o título com um link para a página do imóvel; quando o anúncio não existe mais (pausado ou removido), SHALL mostrar apenas a localização, sem link. A lista SHALL ser paginada quando houver mais visitas do que cabem em uma página.
 
 #### Scenario: Visita com anúncio existente
-- **WHEN** a lista contém uma visita cujo imóvel ainda tem anúncio
-- **THEN** a visita mostra data e hora, status, endereço e o título do imóvel com link para a página dele
+- **WHEN** a lista contém uma visita agendada cujo imóvel ainda tem anúncio e endereço informado
+- **THEN** a visita mostra data e hora, status, bairro e cidade, o endereço completo e o título do imóvel com link para a página dele
 
 #### Scenario: Visita cujo anúncio não existe mais
 - **WHEN** a lista contém uma visita cujo anúncio foi pausado ou removido
-- **THEN** a visita mostra data e hora, status e endereço, sem link para o imóvel
+- **THEN** a visita mostra data e hora, status e localização, sem link para o imóvel
+
+#### Scenario: Visita cancelada ou concluída esconde o endereço completo
+- **WHEN** a lista contém uma visita cancelada ou concluída
+- **THEN** a visita mostra a localização (bairro e cidade), sem o endereço completo
+
+#### Scenario: Visita agendada de imóvel sem endereço informado
+- **WHEN** a lista contém uma visita agendada de um imóvel que não tem endereço informado
+- **THEN** a visita indica que o endereço fica disponível após o agendamento
 
 #### Scenario: Aba Próximas
 - **WHEN** o usuário está na aba "Próximas"

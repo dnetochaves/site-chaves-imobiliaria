@@ -12,20 +12,30 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useCancelarVisita } from "@/lib/api/hooks/use-cancelar-visita";
+import {
+  formatEnderecoLinha,
+  lerEndereco,
+  type ComEnderecoCodigo,
+} from "@/lib/api/endereco";
 import { describeCancelarError } from "@/lib/visita-errors";
 import {
   VISITA_STATUS_OPTIONS,
   formatDataHoraSalvador,
 } from "@/lib/visita-labels";
 
-type MinhaVisita = components["schemas"]["MinhaVisitaRead"];
+type MinhaVisita = components["schemas"]["MinhaVisitaRead"] & ComEnderecoCodigo;
 
 export function VisitaItem({ visita }: { visita: MinhaVisita }) {
   const [confirmando, setConfirmando] = useState(false);
   const cancelar = useCancelarVisita();
 
   const { unidade, imovel } = visita;
-  const enderecoLinha = `${unidade.rua}, ${unidade.numero}${unidade.complemento ? ` - ${unidade.complemento}` : ""}`;
+  // O endereço completo só existe enquanto a visita está agendada; nos demais
+  // status (e quando o imóvel não tem endereço informado) o bloco não aparece.
+  const agendada = visita.status === "agendada";
+  const enderecoLinha = agendada
+    ? formatEnderecoLinha(lerEndereco({ endereco: visita.endereco, unidade }))
+    : null;
   const statusLabel =
     VISITA_STATUS_OPTIONS.find((option) => option.value === visita.status)
       ?.label ?? visita.status;
@@ -61,8 +71,17 @@ export function VisitaItem({ visita }: { visita: MinhaVisita }) {
       )}
 
       <p className="text-text-secondary text-sm">
-        {enderecoLinha} · {unidade.bairro} · {unidade.cidade}/{unidade.estado}
+        {unidade.bairro} · {unidade.cidade}/{unidade.estado}
       </p>
+
+      {enderecoLinha && (
+        <p className="text-text-primary text-sm font-medium">{enderecoLinha}</p>
+      )}
+      {agendada && !enderecoLinha && (
+        <p className="text-text-secondary text-sm">
+          O endereço fica disponível após o agendamento.
+        </p>
+      )}
 
       {visita.status === "agendada" && (
         <Button
@@ -88,8 +107,8 @@ export function VisitaItem({ visita }: { visita: MinhaVisita }) {
           <DialogHeader>
             <DialogTitle>Cancelar esta visita?</DialogTitle>
             <DialogDescription>
-              {formatDataHoraSalvador(visita.data_hora)} · {enderecoLinha}. O
-              horário poderá ser reservado por outra pessoa.
+              {formatDataHoraSalvador(visita.data_hora)} · {unidade.bairro} ·{" "}
+              {unidade.cidade}. O horário poderá ser reservado por outra pessoa.
             </DialogDescription>
           </DialogHeader>
 

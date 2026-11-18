@@ -7,6 +7,11 @@ import {
   ImovelNaoEncontradoError,
 } from "@/lib/api/hooks/use-imovel-detail";
 import { describeApiError } from "@/lib/api/errors";
+import {
+  formatLocalizacaoCompleta,
+  lerEndereco,
+  type ComEnderecoCodigo,
+} from "@/lib/api/endereco";
 import { formatImovelStatus } from "@/lib/imovel-labels";
 import {
   useAtribuirCorretorImovel,
@@ -67,6 +72,9 @@ export default function AdminImovelPage() {
   }
 
   const { unidade } = imovel;
+  const { codigo, endereco: enderecoApi } = imovel as typeof imovel &
+    ComEnderecoCodigo;
+  const endereco = lerEndereco({ endereco: enderecoApi, unidade });
 
   return (
     <div className="flex flex-col gap-6">
@@ -82,9 +90,16 @@ export default function AdminImovelPage() {
           </span>
         </div>
         <p className="text-text-secondary text-sm">
-          {unidade.rua}, {unidade.numero} · {unidade.bairro} ·{" "}
-          {unidade.cidade}/{unidade.estado}
+          {formatLocalizacaoCompleta(endereco, unidade)}
         </p>
+        {endereco?.cep && (
+          <p className="text-text-secondary text-sm">CEP {endereco.cep}</p>
+        )}
+        {codigo && (
+          <p className="text-text-secondary text-sm">
+            Código interno: <span className="text-text-primary">{codigo}</span>
+          </p>
+        )}
         <Link
           href={`/imoveis/${imovel.id}`}
           className="text-brand-primary w-fit text-sm font-medium hover:underline"

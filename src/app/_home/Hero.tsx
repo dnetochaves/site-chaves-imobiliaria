@@ -54,7 +54,7 @@ export function Hero() {
             <Label htmlFor="hero-local">Onde você quer morar?</Label>
             <Input
               id="hero-local"
-              placeholder="Bairro, rua ou praia"
+              placeholder="Bairro, cidade ou condomínio"
               value={local}
               onChange={(event) => setLocal(event.target.value)}
             />

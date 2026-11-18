@@ -20,7 +20,7 @@ export function FavoritoItem({ favorito }: { favorito: FavoritoRead }) {
       <div className="bg-background-muted relative h-20 w-20 shrink-0 overflow-hidden rounded-lg">
         <Image
           src={display?.imageUrl ?? "/property-placeholder.svg"}
-          alt={display?.title ?? `${unidade.rua}, ${unidade.numero}`}
+          alt={display?.title ?? `Imóvel em ${unidade.bairro}`}
           fill
           className="object-cover"
           unoptimized={!!display?.imageUrl}
@@ -50,7 +50,7 @@ export function FavoritoItem({ favorito }: { favorito: FavoritoRead }) {
         ) : (
           <>
             <h3 className="text-text-primary text-sm font-semibold">
-              {unidade.rua}, {unidade.numero}
+              Imóvel em {unidade.bairro}
             </h3>
             <p className="text-text-secondary text-xs">
               Sem anúncio ativo no momento

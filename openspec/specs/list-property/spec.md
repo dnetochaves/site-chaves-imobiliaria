@@ -17,7 +17,7 @@ O sistema SHALL exigir que o usuário esteja autenticado para acessar o formulá
 - **THEN** o sistema exibe o formulário de cadastro de imóvel
 
 ### Requirement: Formulário coleta os dados essenciais do imóvel
-O formulário SHALL coletar: endereço completo, características físicas (área útil, quartos, banheiros, vagas de garagem), título, descrição, tipo de operação (aluguel e/ou venda), os valores comerciais correspondentes ao tipo de operação escolhido e, opcionalmente, o tipo do imóvel (apartamento, casa, cobertura, studio, kitnet, terreno, comercial ou outro).
+O formulário SHALL coletar: localização (bairro, cidade e estado obrigatórios; rua, número, complemento e CEP opcionais), características físicas (área útil obrigatória; quartos, banheiros, vagas de garagem), título, descrição, tipo de operação (aluguel e/ou venda), os valores comerciais correspondentes ao tipo de operação escolhido (no aluguel, o seguro incêndio é opcional e conta como zero quando não informado) e, opcionalmente, o tipo do imóvel (apartamento, casa, cobertura, studio, kitnet, terreno, comercial ou outro) e observações (nota exibida no detalhe do imóvel). Para usuários da equipe, o formulário SHALL oferecer também o código interno do imóvel (opcional).
 
 #### Scenario: Pelo menos um tipo de operação obrigatório
 - **WHEN** um usuário tenta enviar o formulário sem marcar nem "disponível para aluguel" nem "disponível para venda"
@@ -31,16 +31,32 @@ O formulário SHALL coletar: endereço completo, características físicas (áre
 - **WHEN** um usuário envia o formulário sem selecionar um tipo de imóvel
 - **THEN** o envio prossegue normalmente, sem exigir esse campo
 
+#### Scenario: Cadastro sem rua, número e CEP
+- **WHEN** um usuário preenche bairro, cidade, estado e os demais campos obrigatórios, deixando rua, número e CEP em branco, e envia o formulário
+- **THEN** o envio prossegue normalmente, sem exigir o endereço detalhado
+
+#### Scenario: Aluguel sem seguro incêndio
+- **WHEN** um usuário marca aluguel, informa aluguel, condomínio e IPTU, deixa o seguro incêndio em branco e envia o formulário
+- **THEN** o envio prossegue normalmente
+
+#### Scenario: Código interno só para a equipe
+- **WHEN** um usuário que não é da equipe abre o formulário
+- **THEN** o formulário não oferece o campo de código interno
+
+#### Scenario: Código interno já em uso
+- **WHEN** a API recusa o envio porque o código interno informado já pertence a outro anúncio ativo
+- **THEN** o sistema informa que o código já está em uso e mantém os dados preenchidos
+
 ### Requirement: Endereço é geocodificado e confirmado antes do envio
-O sistema SHALL converter o endereço digitado em coordenadas geográficas reais antes de permitir o envio do formulário, e SHALL exibir o resultado da geocodificação (endereço resolvido e localização num mapa) para confirmação do usuário. O sistema SHALL NOT permitir o envio do formulário sem uma geocodificação confirmada.
+Quando o usuário informa rua e número, o sistema SHALL oferecer a busca do endereço em coordenadas geográficas e SHALL exibir o resultado (endereço resolvido e localização num mapa) para confirmação do usuário; as coordenadas confirmadas são enviadas junto com o cadastro. A geocodificação SHALL ser opcional: o sistema SHALL NOT impedir o envio do formulário por falta de uma geocodificação confirmada.
 
 #### Scenario: Geocodificação bem-sucedida
 - **WHEN** um usuário aciona a busca do endereço digitado
 - **THEN** o sistema exibe o endereço resolvido e sua localização num mapa, para o usuário confirmar antes de enviar
 
 #### Scenario: Tentar enviar sem confirmar a geocodificação
-- **WHEN** um usuário tenta enviar o formulário sem ter confirmado um resultado de geocodificação
-- **THEN** o sistema impede o envio
+- **WHEN** um usuário envia o formulário sem ter confirmado um resultado de geocodificação
+- **THEN** o envio prossegue normalmente, sem coordenadas
 
 #### Scenario: Geocodificação sem resultado
 - **WHEN** a busca pelo endereço digitado não retorna nenhum resultado

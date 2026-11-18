@@ -6,7 +6,7 @@ Exibe a página de detalhe de um imóvel — galeria, descrição, característi
 ## Requirements
 
 ### Requirement: Página de detalhe exibe os dados completos do imóvel
-O sistema SHALL exibir, para um imóvel identificado por ID na URL, uma galeria de fotos, título, endereço completo, especificações (área útil, quartos, banheiros, vagas de garagem), descrição, lista de características (amenidades), o detalhamento do preço mensal (aluguel, condomínio, IPTU, seguro incêndio e total) e o tipo do imóvel (ex.: apartamento, casa, studio) quando esse dado estiver preenchido.
+O sistema SHALL exibir, para um imóvel identificado por ID na URL, uma galeria de fotos, título, localização (somente bairro e cidade), especificações (área útil, quartos, banheiros, vagas de garagem), descrição, lista de características (amenidades), o detalhamento do preço mensal (aluguel, condomínio, IPTU, seguro incêndio e total) e o tipo do imóvel (ex.: apartamento, casa, studio) quando esse dado estiver preenchido. A página pública SHALL NOT exibir rua, número, complemento, CEP nem coordenadas do imóvel.
 
 #### Scenario: Imóvel com todos os dados preenchidos
 - **WHEN** a página de detalhe carrega um imóvel que tem fotos, descrição, amenidades e todos os valores de preço preenchidos
@@ -24,12 +24,9 @@ O sistema SHALL exibir, para um imóvel identificado por ID na URL, uma galeria 
 - **WHEN** o imóvel carregado não tem o tipo definido (campo nulo)
 - **THEN** a página não exibe nenhum indicador de tipo, sem mostrar um valor vazio ou um texto genérico no lugar
 
-### Requirement: Localização do imóvel exibida num mapa
-O sistema SHALL exibir um mapa centrado nas coordenadas da unidade, com um marcador indicando sua localização.
-
-#### Scenario: Unidade com coordenadas válidas
-- **WHEN** a unidade do imóvel carregado tem latitude e longitude
-- **THEN** o mapa é centrado nessas coordenadas com um marcador na posição
+#### Scenario: Localização só com bairro e cidade
+- **WHEN** a página de detalhe carrega um imóvel
+- **THEN** a página exibe apenas o bairro e a cidade como localização, sem rua, número, CEP nem mapa
 
 ### Requirement: Favoritar imóvel a partir da página de detalhe
 O sistema SHALL permitir que um usuário autenticado favorite ou desfavorite a unidade do imóvel exibido, refletindo o estado atual (favoritado ou não) ao carregar a página. Para um usuário não autenticado, a ação SHALL iniciar o fluxo de login em vez de favoritar.
@@ -81,11 +78,11 @@ A página de detalhe SHALL exibir uma seção "Agendar visita" com os horários 
 - **THEN** ele é exibido como 14:00 do dia 01/10/2026, mesmo que o navegador do usuário esteja em outro fuso
 
 ### Requirement: Usuário autenticado reserva um horário de visita
-Ao escolher um horário, um usuário autenticado SHALL ver um formulário com telefone (obrigatório, até 30 caracteres) e observações (opcional). Ao confirmar, o sistema SHALL reservar o horário e exibir uma confirmação com a data e hora (no horário de Salvador) e o endereço do imóvel, com um link para "Minhas visitas". Depois de reservar, a lista de horários SHALL ser atualizada. O envio SHALL ficar indisponível enquanto a reserva está em andamento.
+Ao escolher um horário, um usuário autenticado SHALL ver um formulário com telefone (obrigatório, até 30 caracteres) e observações (opcional). Ao confirmar, o sistema SHALL reservar o horário e exibir uma confirmação com a data e hora (no horário de Salvador), informando que o endereço completo fica disponível em "Minhas visitas", com um link para "Minhas visitas". Depois de reservar, a lista de horários SHALL ser atualizada. O envio SHALL ficar indisponível enquanto a reserva está em andamento.
 
 #### Scenario: Reserva bem-sucedida
 - **WHEN** um usuário autenticado escolhe um horário, informa o telefone e confirma
-- **THEN** o sistema exibe a confirmação com data, hora e endereço e um link para Minhas visitas, e o horário reservado deixa de aparecer na lista
+- **THEN** o sistema exibe a confirmação com data e hora, a indicação de que o endereço completo está em Minhas visitas e um link para Minhas visitas, e o horário reservado deixa de aparecer na lista
 
 #### Scenario: Telefone não informado
 - **WHEN** um usuário tenta confirmar a reserva sem informar o telefone
