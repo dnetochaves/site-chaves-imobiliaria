@@ -26,7 +26,7 @@ O sistema SHALL permitir o acesso às páginas do painel administrativo (`/admin
 - **THEN** o sistema exibe um indicador de carregamento, sem exibir o painel nem "Página não encontrada" antes de saber se o usuário é staff
 
 ### Requirement: Painel lista os imóveis de todos os status com filtros
-A página inicial do painel SHALL exibir a lista paginada (20 por página) de imóveis em qualquer status — rascunho, em análise, publicado, pausado, alugado, vendido ou removido —, mostrando para cada um: foto de capa (quando houver), título, endereço (bairro e cidade), status em português, data de cadastro e o corretor atribuído (ou a ausência dele), e SHALL oferecer para cada imóvel a ação de abrir seus detalhes. O painel SHALL permitir filtrar por status (abrindo em "Todos"), por corretor (incluindo "Sem corretor") e por busca de texto, SHALL permitir ordenar por mais novos (padrão) ou mais antigos, e SHALL exibir a contagem total.
+A página inicial do painel SHALL exibir a lista paginada (20 por página) de imóveis em qualquer status — rascunho, em análise, publicado, pausado, alugado, vendido ou removido —, mostrando para cada um: foto de capa (quando houver), título, endereço (bairro e cidade), status em português, data de cadastro, o corretor atribuído (ou a ausência dele) e o selo "Verificado" quando o imóvel foi verificado pela equipe, e SHALL oferecer para cada imóvel a ação de abrir seus detalhes. O painel SHALL permitir filtrar por status (abrindo em "Todos"), por corretor (incluindo "Sem corretor"), por verificação (todos, verificados ou não verificados) e por busca de texto, SHALL permitir ordenar por mais novos (padrão) ou mais antigos, e SHALL exibir a contagem total.
 
 #### Scenario: Lista de publicados carregada
 - **WHEN** um usuário staff acessa a página inicial do painel
@@ -68,6 +68,14 @@ A página inicial do painel SHALL exibir a lista paginada (20 por página) de im
 - **WHEN** a busca dos imóveis falha
 - **THEN** o painel exibe uma mensagem de erro, sem quebrar o restante da página
 
+#### Scenario: Selo de verificado na lista
+- **WHEN** a lista contém um imóvel verificado pela equipe
+- **THEN** a linha desse imóvel exibe o selo "Verificado", e os imóveis não verificados não exibem o selo
+
+#### Scenario: Filtrar por verificação
+- **WHEN** um usuário staff escolhe "Verificados" (ou "Não verificados") no filtro de verificação
+- **THEN** a lista exibe apenas os imóveis verificados (ou apenas os não verificados), voltando para a primeira página
+
 ### Requirement: Painel permite abrir um imóvel pelo ID
 O painel SHALL oferecer um campo para informar o ID de um imóvel e abrir sua tela de moderação, independente do status do imóvel (inclusive não publicados).
 
@@ -84,7 +92,7 @@ O painel SHALL oferecer um campo para informar o ID de um imóvel e abrir sua te
 - **THEN** o sistema não navega e indica que o ID é inválido
 
 ### Requirement: Staff gerencia a publicação de um imóvel pela lista
-Cada imóvel da lista SHALL oferecer exatamente as ações de publicação que a API informa como permitidas naquele momento (aprovar, pausar, rejeitar e republicar), sem oferecer nenhuma outra e sem o painel decidir por conta própria quais valem para cada status. Pausar e rejeitar SHALL pedir confirmação antes de enviar; aprovar e republicar SHALL ser enviados direto. Ao pausar um imóvel cuja unidade tem visitas agendadas futuras, a confirmação SHALL avisar que as visitas continuam marcadas, mas que ninguém mais consegue reservar horários. Ao executar uma ação com sucesso, a lista SHALL refletir o novo status. Um imóvel pausado sem nenhuma ação permitida SHALL exibir a explicação de que a unidade já tem outro anúncio ativo. Se a API recusar a ação, o sistema SHALL exibir uma mensagem em português conforme o motivo, mantendo o status exibido até a lista ser atualizada. Enquanto uma ação está em andamento, as ações daquele imóvel SHALL ficar indisponíveis.
+Cada imóvel da lista SHALL oferecer exatamente as ações de publicação que a API informa como permitidas naquele momento (aprovar, pausar, rejeitar, republicar, verificar e remover a verificação), sem oferecer nenhuma outra e sem o painel decidir por conta própria quais valem para cada status. Pausar e rejeitar SHALL pedir confirmação antes de enviar; aprovar, republicar, verificar e remover a verificação SHALL ser enviados direto. Verificar e remover a verificação SHALL alterar apenas a curadoria do imóvel, sem mudar seu status de publicação. Ao pausar um imóvel cuja unidade tem visitas agendadas futuras, a confirmação SHALL avisar que as visitas continuam marcadas, mas que ninguém mais consegue reservar horários. Ao executar uma ação com sucesso, a lista SHALL refletir o novo status ou a nova situação de verificação. Um imóvel pausado sem nenhuma ação de publicação permitida (mesmo que ainda aceite remover a verificação) SHALL exibir a explicação de que a unidade já tem outro anúncio ativo. Se a API recusar a ação, o sistema SHALL exibir uma mensagem em português conforme o motivo, mantendo o status exibido até a lista ser atualizada. Enquanto uma ação está em andamento, as ações daquele imóvel SHALL ficar indisponíveis.
 
 #### Scenario: Aprovar um imóvel
 - **WHEN** um usuário staff aciona "Aprovar" em um imóvel em análise
@@ -111,7 +119,7 @@ Cada imóvel da lista SHALL oferecer exatamente as ações de publicação que a
 - **THEN** a lista não exibe nenhuma ação de publicação para ele
 
 #### Scenario: Imóvel pausado cuja unidade já tem outro anúncio ativo
-- **WHEN** um imóvel pausado não aceita nenhuma ação
+- **WHEN** um imóvel pausado não aceita nenhuma ação de publicação (nem republicar)
 - **THEN** a lista exibe a explicação de que a unidade já tem outro anúncio ativo
 
 #### Scenario: Desistir de pausar ou rejeitar
@@ -141,6 +149,22 @@ Cada imóvel da lista SHALL oferecer exatamente as ações de publicação que a
 #### Scenario: Ação em andamento
 - **WHEN** uma ação de publicação está sendo enviada
 - **THEN** as ações daquele imóvel ficam indisponíveis até a resposta chegar, evitando envios duplicados
+
+#### Scenario: Verificar um imóvel
+- **WHEN** um usuário staff aciona "Verificar" em um imóvel que a API informa como verificável
+- **THEN** o imóvel passa a ser verificado, a linha exibe o selo "Verificado" e o status de publicação não muda
+
+#### Scenario: Remover a verificação
+- **WHEN** um usuário staff aciona "Remover verificação" em um imóvel verificado
+- **THEN** o imóvel deixa de ser verificado e a linha deixa de exibir o selo
+
+#### Scenario: Verificação sem confirmação
+- **WHEN** um usuário staff aciona "Verificar" ou "Remover verificação"
+- **THEN** a ação é enviada direto, sem diálogo de confirmação
+
+#### Scenario: Verificação não permitida
+- **WHEN** a API recusa verificar ou remover a verificação porque a situação do imóvel já mudou
+- **THEN** o sistema informa que o imóvel mudou e atualiza a lista, sem exibir mensagem em inglês
 
 ### Requirement: Painel oferece navegação entre suas seções
 Toda página do painel administrativo SHALL exibir uma navegação que permita ir para a seção de imóveis, para a seção de leads, para a seção de visitas e para a seção de corretores, indicando qual seção está ativa.

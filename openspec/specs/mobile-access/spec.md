@@ -39,7 +39,7 @@ Todas as páginas do site SHALL ser utilizáveis em telas com largura de 375px e
 - **THEN** a página não tem rolagem horizontal e nenhum campo, aviso ou botão fica cortado na borda
 
 ### Requirement: Navegação e ações principais têm área de toque adequada
-Em telas estreitas, os elementos de navegação e as ações principais — links do header e do menu, ação de conta (entrar/sair), links do footer, o link "Ver todos" da Home, as abas de seção do painel administrativo, os botões de horário da seção de agendamento, as ações das visitas em Minhas visitas (abas, cancelar), as ações de concluir e cancelar da lista de visitas do painel administrativo, as ações de desativar/reativar da lista de corretores do painel administrativo, as ações de contato e compartilhar do card público do corretor e as ações de publicação (aprovar, pausar, rejeitar, republicar) da lista de imóveis do painel administrativo e as ações de interpretar o texto e de cadastrar na importação por texto — SHALL ter área de toque de pelo menos 44px de altura. Em telas largas, o tamanho desses elementos SHALL permanecer como antes.
+Em telas estreitas, os elementos de navegação e as ações principais — links do header e do menu, ação de conta (entrar/sair), links do footer, o link "Ver todos" da Home, as abas de seção do painel administrativo, os botões de horário da seção de agendamento, as ações das visitas em Minhas visitas (abas, cancelar), as ações de concluir e cancelar da lista de visitas do painel administrativo, as ações de desativar/reativar da lista de corretores do painel administrativo, as ações de contato e compartilhar do card público do corretor e as ações de publicação e de verificação (aprovar, pausar, rejeitar, republicar, verificar, remover a verificação) da lista de imóveis do painel administrativo e as ações de interpretar o texto e de cadastrar na importação por texto — SHALL ter área de toque de pelo menos 44px de altura. Em telas largas, o tamanho desses elementos SHALL permanecer como antes.
 
 #### Scenario: Links do menu com área de toque
 - **WHEN** o menu de navegação está aberto em tela estreita
@@ -79,7 +79,7 @@ Em telas estreitas, os elementos de navegação e as ações principais — link
 
 #### Scenario: Ações de publicação da lista de imóveis com área de toque
 - **WHEN** um usuário staff vê a lista de imóveis do painel em tela estreita
-- **THEN** cada botão de aprovar, pausar, rejeitar ou republicar tem pelo menos 44px de altura
+- **THEN** cada botão de aprovar, pausar, rejeitar, republicar, verificar ou remover a verificação tem pelo menos 44px de altura
 
 #### Scenario: Ações da importação por texto com área de toque
 - **WHEN** um usuário staff vê a tela de importar imóvel por texto em tela estreita
