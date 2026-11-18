@@ -27,12 +27,15 @@ import { ImovelAdminLinha } from "@/app/admin/_components/ImovelAdminLinha";
 const IMOVEIS_POR_PAGINA = 20;
 const TODOS = "todos";
 const SEM_CORRETOR = "sem-corretor";
+const VERIFICADOS = "verificados";
+const NAO_VERIFICADOS = "nao-verificados";
 
 type Ordenacao = NonNullable<AdminImoveisParams["ordenar"]>;
 
 export function ImoveisAdminLista() {
   const [status, setStatus] = useState<ImovelStatus | undefined>();
   const [corretor, setCorretor] = useState<string>(TODOS);
+  const [verificacao, setVerificacao] = useState<string>(TODOS);
   const [buscaInput, setBuscaInput] = useState("");
   const [busca, setBusca] = useState("");
   const [ordenar, setOrdenar] = useState<Ordenacao>("criacao_desc");
@@ -48,6 +51,12 @@ export function ImoveisAdminLista() {
         ? Number(corretor)
         : undefined,
     sem_corretor: corretor === SEM_CORRETOR ? true : undefined,
+    verificado:
+      verificacao === VERIFICADOS
+        ? true
+        : verificacao === NAO_VERIFICADOS
+          ? false
+          : undefined,
     q: busca || undefined,
     ordenar,
     limit: IMOVEIS_POR_PAGINA,
@@ -116,6 +125,26 @@ export function ImoveisAdminLista() {
                   {c.ativo ? "" : " (inativo)"}
                 </SelectItem>
               ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="imoveis-verificacao">Verificação</Label>
+          <Select
+            value={verificacao}
+            onValueChange={(valor) => {
+              setVerificacao(valor);
+              setPage(1);
+            }}
+          >
+            <SelectTrigger id="imoveis-verificacao" size="sm" className="w-44">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={TODOS}>Todos</SelectItem>
+              <SelectItem value={VERIFICADOS}>Verificados</SelectItem>
+              <SelectItem value={NAO_VERIFICADOS}>Não verificados</SelectItem>
             </SelectContent>
           </Select>
         </div>

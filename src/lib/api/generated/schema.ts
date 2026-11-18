@@ -300,6 +300,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/imoveis/{imovel_id}/verificar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify
+         * @description Marks a `publicado` listing that is not verified as verified. The status, the
+         *     approver and the approval time do not change.
+         */
+        post: operations["verify_imoveis__imovel_id__verificar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/imoveis/{imovel_id}/desverificar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Unverify
+         * @description Removes the mark from a verified listing that is `publicado` or `pausado`. The
+         *     status, the approver and the approval time do not change.
+         */
+        post: operations["unverify_imoveis__imovel_id__desverificar_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/imoveis/{imovel_id}": {
         parameters: {
             query?: never;
@@ -1808,11 +1850,12 @@ export interface components {
         LeadTipo: "simulacao_financiamento" | "contato_imovel" | "proposta_condominio" | "anunciar_imovel" | "outro";
         /**
          * ListingAction
-         * @description A status action staff can apply to a listing. Which status each one is valid
-         *     from, and where it leads, is `TRANSITIONS` in `service.py`.
+         * @description An action staff can apply to a listing. Which status each status action is
+         *     valid from, and where it leads, is `TRANSITIONS` in `service.py`; the two that
+         *     toggle the verification mark and keep the status are in `FLAG_ACTIONS`.
          * @enum {string}
          */
-        ListingAction: "aprovar" | "pausar" | "rejeitar" | "republicar";
+        ListingAction: "aprovar" | "pausar" | "rejeitar" | "republicar" | "verificar" | "desverificar";
         /** LogoutRequest */
         LogoutRequest: {
             /** Refresh Token */
@@ -3194,6 +3237,180 @@ export interface operations {
             };
         };
     };
+    verify_imoveis__imovel_id__verificar_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                imovel_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImovelDetail"];
+                };
+            };
+            /** @description The listing's status or verification does not allow this action */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    unverify_imoveis__imovel_id__desverificar_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                imovel_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImovelDetail"];
+                };
+            };
+            /** @description The listing's status or verification does not allow this action */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Resource not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_detail_imoveis__imovel_id__get: {
         parameters: {
             query?: never;
@@ -3267,6 +3484,8 @@ export interface operations {
                 q?: string | null;
                 disponivel_aluguel?: boolean | null;
                 disponivel_venda?: boolean | null;
+                /** @description `true` only verified listings, `false` only unverified ones; omitted means both. */
+                verificado?: boolean | null;
                 /** @description Price orderings use the monthly total (the sale price for a sale-only `disponivel_venda` filter); listings without it sort last. */
                 ordenar?: components["schemas"]["AdminListingOrdering"];
                 limit?: number;

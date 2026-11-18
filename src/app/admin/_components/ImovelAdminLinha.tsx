@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { BadgeCheck } from "lucide-react";
 import Link from "next/link";
 import type { components } from "@/lib/api/generated/schema";
 import { Button } from "@/components/ui/button";
@@ -55,8 +56,10 @@ export function ImovelAdminLinha({ imovel }: { imovel: ImovelAdmin }) {
   const acoes = ACOES_ORDEM.filter(
     (acao) => imovel.acoes_permitidas.some((valor) => isAcaoConhecida(valor) && valor === acao),
   );
+  // Um pausado verificado ainda aceita "remover verificação"; o aviso de unidade
+  // com outro anúncio ativo depende só de não haver ação de publicação.
   const pausadoSemAcoes =
-    imovel.status === "pausado" && imovel.acoes_permitidas.length === 0;
+    imovel.status === "pausado" && !acoes.includes("republicar");
   const visitas = imovel.visitas_agendadas_futuras_na_unidade;
 
   function executar(acao: ListingAction) {
@@ -97,8 +100,16 @@ export function ImovelAdminLinha({ imovel }: { imovel: ImovelAdmin }) {
             >
               #{imovel.id} · {imovel.titulo}
             </Link>
-            <span className="bg-background-muted text-text-secondary rounded-full px-2.5 py-0.5 text-xs">
-              {formatImovelStatus(imovel.status)}
+            <span className="flex flex-wrap items-center gap-1.5">
+              {imovel.verificado && (
+                <span className="bg-brand-secondary-subtle text-brand-secondary flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium">
+                  <BadgeCheck className="size-3.5" aria-hidden="true" />
+                  Verificado
+                </span>
+              )}
+              <span className="bg-background-muted text-text-secondary rounded-full px-2.5 py-0.5 text-xs">
+                {formatImovelStatus(imovel.status)}
+              </span>
             </span>
           </div>
           <span className="text-text-secondary text-xs">

@@ -16,6 +16,10 @@ function enviarAcao(acao: AcaoModeracao, imovelId: number) {
       return apiClient.POST("/imoveis/{imovel_id}/rejeitar", init);
     case "republicar":
       return apiClient.POST("/imoveis/{imovel_id}/republicar", init);
+    case "verificar":
+      return apiClient.POST("/imoveis/{imovel_id}/verificar", init);
+    case "desverificar":
+      return apiClient.POST("/imoveis/{imovel_id}/desverificar", init);
   }
 }
 

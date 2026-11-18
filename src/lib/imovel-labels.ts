@@ -26,6 +26,8 @@ export const ACAO_LABELS: Record<ListingAction, string> = {
   pausar: "Pausar",
   rejeitar: "Rejeitar",
   republicar: "Republicar",
+  verificar: "Verificar",
+  desverificar: "Remover verificação",
 };
 
 export const ACOES_ORDEM: ListingAction[] = [
@@ -33,6 +35,8 @@ export const ACOES_ORDEM: ListingAction[] = [
   "republicar",
   "pausar",
   "rejeitar",
+  "verificar",
+  "desverificar",
 ];
 
 export function isAcaoConhecida(valor: string): valor is ListingAction {
