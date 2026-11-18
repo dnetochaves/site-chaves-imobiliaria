@@ -7,11 +7,7 @@ import {
   ImovelNaoEncontradoError,
 } from "@/lib/api/hooks/use-imovel-detail";
 import { describeApiError } from "@/lib/api/errors";
-import {
-  formatLocalizacaoCompleta,
-  lerEndereco,
-  type ComEnderecoCodigo,
-} from "@/lib/api/endereco";
+import { formatLocalizacaoCompleta } from "@/lib/api/endereco";
 import { formatImovelStatus } from "@/lib/imovel-labels";
 import {
   useAtribuirCorretorImovel,
@@ -72,9 +68,7 @@ export default function AdminImovelPage() {
   }
 
   const { unidade } = imovel;
-  const { codigo, endereco: enderecoApi } = imovel as typeof imovel &
-    ComEnderecoCodigo;
-  const endereco = lerEndereco({ endereco: enderecoApi, unidade });
+  const { codigo, endereco } = imovel;
 
   return (
     <div className="flex flex-col gap-6">

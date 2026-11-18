@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,50 @@ import { useCreateImovel } from "@/lib/api/hooks/use-create-imovel";
 import { ApiError, describeApiError } from "@/lib/api/errors";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { TIPO_OPTIONS, type PropertyType } from "@/lib/property-types";
+import type { components } from "@/lib/api/generated/schema";
+import { cn } from "@/lib/utils";
+import { MENSAGEM_UNIDADE_ATIVA } from "@/lib/imovel-errors";
+
+export type RascunhoImovel = components["schemas"]["ImovelSubmissionDraft"];
+
+/** Nomes dos campos da API que a interpretação marcou como ausentes ou inválidos. */
+export type DestaquesCampos = { ausentes: string[]; invalidos: string[] };
+
+export type SucessoCadastro = {
+  href: (id: number) => string;
+  rotulo: string;
+  texto?: string;
+  acao?: ReactNode;
+};
+
+/** Campo da API -> id do input no formulário. */
+const ID_DO_CAMPO: Record<string, string> = {
+  rua: "rua",
+  numero: "numero",
+  complemento: "complemento",
+  bairro: "bairro",
+  cidade: "cidade",
+  estado: "estado",
+  cep: "cep",
+  area_util_m2: "area",
+  quartos: "quartos",
+  banheiros: "banheiros",
+  vagas_garagem: "vagas",
+  tipo: "tipo",
+  titulo: "titulo",
+  descricao: "descricao",
+  valor_aluguel: "valorAluguel",
+  valor_condominio: "valorCondominio",
+  valor_iptu: "valorIptu",
+  valor_seguro_incendio: "valorSeguro",
+  valor_venda: "valorVenda",
+  codigo: "codigo",
+  observacoes: "observacoes",
+};
+
+const texto = (v: string | null | undefined) => v ?? "";
+const numStr = (v: number | null | undefined, padrao: string) =>
+  v === null || v === undefined ? padrao : String(v);
 
 function addressKey(fields: {
   rua: string;
@@ -33,38 +77,49 @@ function addressKey(fields: {
   return `${fields.rua.trim()}|${fields.numero.trim()}|${fields.bairro.trim()}|${fields.cidade.trim()}`.toLowerCase();
 }
 
-export function ListPropertyForm() {
-  const [rua, setRua] = useState("");
-  const [numero, setNumero] = useState("");
-  const [complemento, setComplemento] = useState("");
-  const [bairro, setBairro] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [estado, setEstado] = useState("");
-  const [cep, setCep] = useState("");
-  const [observacoes, setObservacoes] = useState("");
-  const [codigo, setCodigo] = useState("");
+export function ListPropertyForm({
+  valoresIniciais,
+  destaques,
+  sucesso,
+  aoCadastrar,
+}: {
+  valoresIniciais?: RascunhoImovel;
+  destaques?: DestaquesCampos;
+  sucesso?: SucessoCadastro;
+  aoCadastrar?: () => void;
+} = {}) {
+  const inicial = valoresIniciais;
+  const [rua, setRua] = useState(texto(inicial?.rua));
+  const [numero, setNumero] = useState(texto(inicial?.numero));
+  const [complemento, setComplemento] = useState(texto(inicial?.complemento));
+  const [bairro, setBairro] = useState(texto(inicial?.bairro));
+  const [cidade, setCidade] = useState(texto(inicial?.cidade));
+  const [estado, setEstado] = useState(texto(inicial?.estado));
+  const [cep, setCep] = useState(texto(inicial?.cep));
+  const [observacoes, setObservacoes] = useState(texto(inicial?.observacoes));
+  const [codigo, setCodigo] = useState(texto(inicial?.codigo));
 
-  const [areaUtilM2, setAreaUtilM2] = useState("");
-  const [quartos, setQuartos] = useState("0");
-  const [banheiros, setBanheiros] = useState("0");
-  const [vagasGaragem, setVagasGaragem] = useState("0");
-  const [tipo, setTipo] = useState("");
+  const [areaUtilM2, setAreaUtilM2] = useState(texto(inicial?.area_util_m2));
+  const [quartos, setQuartos] = useState(numStr(inicial?.quartos, "0"));
+  const [banheiros, setBanheiros] = useState(numStr(inicial?.banheiros, "0"));
+  const [vagasGaragem, setVagasGaragem] = useState(numStr(inicial?.vagas_garagem, "0"));
+  const [tipo, setTipo] = useState<string>(inicial?.tipo ?? "");
 
-  const [titulo, setTitulo] = useState("");
-  const [descricao, setDescricao] = useState("");
+  const [titulo, setTitulo] = useState(texto(inicial?.titulo));
+  const [descricao, setDescricao] = useState(texto(inicial?.descricao));
 
-  const [disponivelAluguel, setDisponivelAluguel] = useState(false);
-  const [disponivelVenda, setDisponivelVenda] = useState(false);
-  const [mobiliado, setMobiliado] = useState(false);
-  const [aceitaPets, setAceitaPets] = useState(false);
+  const [disponivelAluguel, setDisponivelAluguel] = useState(inicial?.disponivel_aluguel === true);
+  const [disponivelVenda, setDisponivelVenda] = useState(inicial?.disponivel_venda === true);
+  const [mobiliado, setMobiliado] = useState(inicial?.mobiliado === true);
+  const [aceitaPets, setAceitaPets] = useState(inicial?.aceita_pets === true);
 
-  const [valorAluguel, setValorAluguel] = useState("");
-  const [valorCondominio, setValorCondominio] = useState("");
-  const [valorIptu, setValorIptu] = useState("");
-  const [valorSeguroIncendio, setValorSeguroIncendio] = useState("");
-  const [valorVenda, setValorVenda] = useState("");
+  const [valorAluguel, setValorAluguel] = useState(texto(inicial?.valor_aluguel));
+  const [valorCondominio, setValorCondominio] = useState(texto(inicial?.valor_condominio));
+  const [valorIptu, setValorIptu] = useState(texto(inicial?.valor_iptu));
+  const [valorSeguroIncendio, setValorSeguroIncendio] = useState(texto(inicial?.valor_seguro_incendio));
+  const [valorVenda, setValorVenda] = useState(texto(inicial?.valor_venda));
 
-  const [fotoUrlsText, setFotoUrlsText] = useState("");
+  const [fotoUrlsText, setFotoUrlsText] = useState((inicial?.foto_urls ?? []).join("\n"));
 
   const [geocodedKey, setGeocodedKey] = useState<string | null>(null);
   const [confirmedGeocode, setConfirmedGeocode] = useState<{
@@ -73,6 +128,7 @@ export function ListPropertyForm() {
   } | null>(null);
   const [operationError, setOperationError] = useState(false);
 
+  const amenidadeIds = inicial?.amenidade_ids ?? [];
   const { user } = useAuth();
   const geocode = useGeocodeAddress();
   const createImovel = useCreateImovel();
@@ -80,6 +136,16 @@ export function ListPropertyForm() {
   const codigoEmUso =
     createImovel.error instanceof ApiError &&
     createImovel.error.code === "codigo_ja_em_uso";
+  const idsAusentes = new Set((destaques?.ausentes ?? []).map((c) => ID_DO_CAMPO[c]).filter(Boolean));
+  const idsInvalidos = new Set((destaques?.invalidos ?? []).map((c) => ID_DO_CAMPO[c]).filter(Boolean));
+  const marca = (id: string) => idsAusentes.has(id) || idsInvalidos.has(id);
+  const rotulo = (id: string) => cn(marca(id) && "text-feedback-error");
+  const operacaoDestacada = [...(destaques?.ausentes ?? []), ...(destaques?.invalidos ?? [])].some(
+    (c) => c === "disponivel_aluguel" || c === "disponivel_venda",
+  );
+  const unidadeComAnuncioAtivo =
+    createImovel.error instanceof ApiError &&
+    createImovel.error.code === "unidade_ja_tem_anuncio_ativo";
   const currentKey = addressKey({ rua, numero, bairro, cidade });
   const isGeocodeConfirmed = confirmedGeocode?.key === currentKey;
   const showGeocodeResult = geocodedKey === currentKey;
@@ -149,7 +215,8 @@ export function ListPropertyForm() {
       foto_urls: fotoUrls.length > 0 ? fotoUrls : undefined,
       observacoes: observacoes.trim() || undefined,
       codigo: user?.is_staff ? codigo.trim() || undefined : undefined,
-    });
+      amenidade_ids: amenidadeIds.length > 0 ? amenidadeIds : undefined,
+    }, { onSuccess: () => aoCadastrar?.() });
   }
 
   if (createImovel.isSuccess && createImovel.data) {
@@ -158,12 +225,20 @@ export function ListPropertyForm() {
         <p className="text-text-primary text-lg font-semibold">
           Imóvel cadastrado com sucesso!
         </p>
+        {sucesso?.texto && (
+          <p className="text-text-secondary text-sm">{sucesso.texto}</p>
+        )}
         <Link
-          href={`/imoveis/${createImovel.data.id}`}
+          href={
+            sucesso
+              ? sucesso.href(createImovel.data.id)
+              : `/imoveis/${createImovel.data.id}`
+          }
           className="text-brand-primary text-sm font-medium hover:underline"
         >
-          Ver o anúncio →
+          {sucesso?.rotulo ?? "Ver o anúncio →"}
         </Link>
+        {sucesso?.acao}
       </div>
     );
   }
@@ -182,17 +257,19 @@ export function ListPropertyForm() {
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[2fr_1fr]">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="rua">Rua (opcional)</Label>
+            <Label htmlFor="rua" className={rotulo("rua")}>Rua (opcional)</Label>
             <Input
               id="rua"
+aria-invalid={marca("rua")}
               value={rua}
               onChange={(e) => setRua(e.target.value)}
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="numero">Número (opcional)</Label>
+            <Label htmlFor="numero" className={rotulo("numero")}>Número (opcional)</Label>
             <Input
               id="numero"
+aria-invalid={marca("numero")}
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
             />
@@ -200,9 +277,10 @@ export function ListPropertyForm() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="complemento">Complemento (opcional)</Label>
+          <Label htmlFor="complemento" className={rotulo("complemento")}>Complemento (opcional)</Label>
           <Input
             id="complemento"
+aria-invalid={marca("complemento")}
             value={complemento}
             onChange={(e) => setComplemento(e.target.value)}
           />
@@ -210,27 +288,30 @@ export function ListPropertyForm() {
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="bairro">Bairro</Label>
+            <Label htmlFor="bairro" className={rotulo("bairro")}>Bairro</Label>
             <Input
               id="bairro"
+aria-invalid={marca("bairro")}
               required
               value={bairro}
               onChange={(e) => setBairro(e.target.value)}
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="cidade">Cidade</Label>
+            <Label htmlFor="cidade" className={rotulo("cidade")}>Cidade</Label>
             <Input
               id="cidade"
+aria-invalid={marca("cidade")}
               required
               value={cidade}
               onChange={(e) => setCidade(e.target.value)}
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="estado">Estado (UF)</Label>
+            <Label htmlFor="estado" className={rotulo("estado")}>Estado (UF)</Label>
             <Input
               id="estado"
+aria-invalid={marca("estado")}
               required
               maxLength={2}
               placeholder="SP"
@@ -241,9 +322,10 @@ export function ListPropertyForm() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="cep">CEP (opcional)</Label>
+          <Label htmlFor="cep" className={rotulo("cep")}>CEP (opcional)</Label>
           <Input
             id="cep"
+aria-invalid={marca("cep")}
             value={cep}
             onChange={(e) => setCep(e.target.value)}
           />
@@ -334,9 +416,10 @@ export function ListPropertyForm() {
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="area">Área útil (m²)</Label>
+            <Label htmlFor="area" className={rotulo("area")}>Área útil (m²)</Label>
             <Input
               id="area"
+aria-invalid={marca("area")}
               required
               type="number"
               min="0"
@@ -345,9 +428,10 @@ export function ListPropertyForm() {
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="quartos">Quartos</Label>
+            <Label htmlFor="quartos" className={rotulo("quartos")}>Quartos</Label>
             <Input
               id="quartos"
+aria-invalid={marca("quartos")}
               type="number"
               min="0"
               value={quartos}
@@ -355,9 +439,10 @@ export function ListPropertyForm() {
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="banheiros">Banheiros</Label>
+            <Label htmlFor="banheiros" className={rotulo("banheiros")}>Banheiros</Label>
             <Input
               id="banheiros"
+aria-invalid={marca("banheiros")}
               type="number"
               min="0"
               value={banheiros}
@@ -365,9 +450,10 @@ export function ListPropertyForm() {
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="vagas">Vagas</Label>
+            <Label htmlFor="vagas" className={rotulo("vagas")}>Vagas</Label>
             <Input
               id="vagas"
+aria-invalid={marca("vagas")}
               type="number"
               min="0"
               value={vagasGaragem}
@@ -377,9 +463,9 @@ export function ListPropertyForm() {
         </div>
 
         <div className="flex flex-col gap-1.5 sm:w-60">
-          <Label htmlFor="tipo">Tipo de imóvel (opcional)</Label>
+          <Label htmlFor="tipo" className={rotulo("tipo")}>Tipo de imóvel (opcional)</Label>
           <Select value={tipo || "nao-especificado"} onValueChange={(value) => setTipo(value === "nao-especificado" ? "" : value)}>
-            <SelectTrigger id="tipo">
+            <SelectTrigger id="tipo" aria-invalid={marca("tipo")}>
               <SelectValue placeholder="Não especificado" />
             </SelectTrigger>
             <SelectContent>
@@ -416,18 +502,20 @@ export function ListPropertyForm() {
           Título e descrição
         </h2>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="titulo">Título</Label>
+          <Label htmlFor="titulo" className={rotulo("titulo")}>Título</Label>
           <Input
             id="titulo"
+aria-invalid={marca("titulo")}
             required
             value={titulo}
             onChange={(e) => setTitulo(e.target.value)}
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="descricao">Descrição</Label>
+          <Label htmlFor="descricao" className={rotulo("descricao")}>Descrição</Label>
           <Textarea
             id="descricao"
+aria-invalid={marca("descricao")}
             required
             rows={4}
             value={descricao}
@@ -435,9 +523,10 @@ export function ListPropertyForm() {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="observacoes">Observações (opcional)</Label>
+          <Label htmlFor="observacoes" className={rotulo("observacoes")}>Observações (opcional)</Label>
           <Textarea
             id="observacoes"
+aria-invalid={marca("observacoes")}
             rows={2}
             value={observacoes}
             onChange={(e) => setObservacoes(e.target.value)}
@@ -448,11 +537,11 @@ export function ListPropertyForm() {
         </div>
         {user?.is_staff && (
           <div className="flex flex-col gap-1.5 sm:w-60">
-            <Label htmlFor="codigo">Código interno (opcional)</Label>
+            <Label htmlFor="codigo" className={rotulo("codigo")}>Código interno (opcional)</Label>
             <Input
               id="codigo"
+aria-invalid={marca("codigo") || codigoEmUso}
               value={codigo}
-              aria-invalid={codigoEmUso}
               onChange={(e) => setCodigo(e.target.value)}
             />
             {codigoEmUso && (
@@ -486,6 +575,12 @@ export function ListPropertyForm() {
           </label>
         </div>
 
+        {operacaoDestacada && !disponivelAluguel && !disponivelVenda && (
+          <p className="text-feedback-error text-sm">
+            O texto não indicou se é aluguel ou venda. Escolha uma opção.
+          </p>
+        )}
+
         {operationError && (
           <p className="text-feedback-error text-sm">
             Escolha pelo menos um tipo de operação (aluguel ou venda).
@@ -495,9 +590,10 @@ export function ListPropertyForm() {
         {disponivelAluguel && (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="valorAluguel">Aluguel (R$)</Label>
+              <Label htmlFor="valorAluguel" className={rotulo("valorAluguel")}>Aluguel (R$)</Label>
               <Input
                 id="valorAluguel"
+aria-invalid={marca("valorAluguel")}
                 type="number"
                 min="0"
                 value={valorAluguel}
@@ -505,9 +601,10 @@ export function ListPropertyForm() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="valorCondominio">Condomínio (R$)</Label>
+              <Label htmlFor="valorCondominio" className={rotulo("valorCondominio")}>Condomínio (R$)</Label>
               <Input
                 id="valorCondominio"
+aria-invalid={marca("valorCondominio")}
                 type="number"
                 min="0"
                 value={valorCondominio}
@@ -515,9 +612,10 @@ export function ListPropertyForm() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="valorIptu">IPTU (R$)</Label>
+              <Label htmlFor="valorIptu" className={rotulo("valorIptu")}>IPTU (R$)</Label>
               <Input
                 id="valorIptu"
+aria-invalid={marca("valorIptu")}
                 type="number"
                 min="0"
                 value={valorIptu}
@@ -525,9 +623,10 @@ export function ListPropertyForm() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="valorSeguro">Seguro incêndio (R$, opcional)</Label>
+              <Label htmlFor="valorSeguro" className={rotulo("valorSeguro")}>Seguro incêndio (R$, opcional)</Label>
               <Input
                 id="valorSeguro"
+aria-invalid={marca("valorSeguro")}
                 type="number"
                 min="0"
                 value={valorSeguroIncendio}
@@ -539,9 +638,10 @@ export function ListPropertyForm() {
 
         {disponivelVenda && (
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="valorVenda">Valor de venda (R$)</Label>
+            <Label htmlFor="valorVenda" className={rotulo("valorVenda")}>Valor de venda (R$)</Label>
             <Input
               id="valorVenda"
+aria-invalid={marca("valorVenda")}
               type="number"
               min="0"
               value={valorVenda}
@@ -569,16 +669,22 @@ export function ListPropertyForm() {
 
       {createImovel.isError && !codigoEmUso && (
         <p className="text-feedback-error text-sm">
-          {describeApiError(
-            createImovel.error,
-            "Não foi possível cadastrar o imóvel agora. Tente novamente.",
-            { showValidationDetails: true },
-          )}
+          {unidadeComAnuncioAtivo
+            ? MENSAGEM_UNIDADE_ATIVA
+            : describeApiError(
+                createImovel.error,
+                "Não foi possível cadastrar o imóvel agora. Tente novamente.",
+                { showValidationDetails: true },
+              )}
         </p>
       )}
 
       <div className="flex flex-col gap-2">
-        <Button type="submit" loading={createImovel.isPending}>
+        <Button
+          type="submit"
+          className="h-11 md:h-8"
+          loading={createImovel.isPending}
+        >
           Cadastrar imóvel
         </Button>
       </div>

@@ -310,7 +310,9 @@ export interface paths {
         /**
          * Get Detail
          * @description Published listings are visible to anyone; non-published ones only to
-         *     their responsible user or staff.
+         *     their responsible user or staff. The exact address, internal code and responsible
+         *     user are in the response only for those two (`endereco`, `codigo`, `responsavel_id`
+         *     are `null` for everyone else).
          */
         get: operations["get_detail_imoveis__imovel_id__get"];
         put?: never;
@@ -336,6 +338,33 @@ export interface paths {
         get: operations["admin_list_listings_admin_imoveis_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/imoveis/interpretar-texto": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Interpret Text
+         * @description Staff-only. Turns a pasted listing message into a proposal of the registration
+         *     fields, with what is still missing and warnings about it. Writes nothing: the
+         *     front end corrects `imovel` and sends it to `POST /imoveis`.
+         *
+         *     Money and area are converted by the server from the text as written and kept only
+         *     if they occur in it; personal data (phone, e-mail, CPF/CNPJ) is masked before the
+         *     text reaches the AI service. When the AI service fails, the answer is always the
+         *     same `interpretacao_indisponivel`; the reason stays in the server log.
+         */
+        post: operations["interpret_text_admin_imoveis_interpretar_texto_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -956,6 +985,16 @@ export interface components {
             created_at: string;
         };
         /**
+         * Aviso
+         * @description A warning about the proposal: a stable `codigo` and a short, actionable message.
+         */
+        Aviso: {
+            /** Codigo */
+            codigo: string;
+            /** Mensagem */
+            mensagem: string;
+        };
+        /**
          * CondominioCreate
          * @description Payload for registering a condominium. `sindico_id`, if given, must
          *     reference a staff-designated user (validated in `service.py`).
@@ -1046,6 +1085,17 @@ export interface components {
             numero_unidades: number;
             /** Sindico Id */
             sindico_id: number | null;
+        };
+        /** CondominioRef */
+        CondominioRef: {
+            /** Id */
+            id: number;
+            /** Nome */
+            nome: string;
+            /** Bairro */
+            bairro: string;
+            /** Cidade */
+            cidade: string;
         };
         /**
          * CorretorCreate
@@ -1179,6 +1229,28 @@ export interface components {
             cidade?: string | null;
             redes_sociais?: components["schemas"]["RedesSociais"] | null;
         };
+        /**
+         * EnderecoRead
+         * @description The unit's exact address, for staff and the listing's responsible user only.
+         *
+         *     Every part is optional: a listing may be registered without any of them. No
+         *     public response may reach this type (guarded by
+         *     `tests/test_address_privacy_never_leaks.py`).
+         */
+        EnderecoRead: {
+            /** Rua */
+            rua?: string | null;
+            /** Numero */
+            numero?: string | null;
+            /** Complemento */
+            complemento?: string | null;
+            /** Cep */
+            cep?: string | null;
+            /** Latitude */
+            latitude?: string | null;
+            /** Longitude */
+            longitude?: string | null;
+        };
         /** ErrorBody */
         ErrorBody: {
             /** Code */
@@ -1222,6 +1294,23 @@ export interface components {
          * @description A listing in the staff list: the summary plus what the screen needs to act.
          */
         ImovelAdminRead: {
+            /** @description The unit's exact address. Null for callers who are neither staff nor the listing's responsible user. */
+            endereco?: components["schemas"]["EnderecoRead"] | null;
+            /**
+             * Codigo
+             * @description Internal code issued by Chaves. Null when the listing has none or the caller is neither staff nor the listing's responsible user.
+             */
+            codigo?: string | null;
+            /**
+             * Responsavel Id
+             * @description The responsible user's id. Null for callers who are neither staff nor the listing's responsible user.
+             */
+            responsavel_id?: number | null;
+            /**
+             * Aprovado Por Id
+             * @description The id of the staff member who first approved the listing. Null when it was never approved or the caller is neither staff nor the listing's responsible user.
+             */
+            aprovado_por_id?: number | null;
             /** Id */
             id: number;
             /** Titulo */
@@ -1249,8 +1338,6 @@ export interface components {
             valor_total_mensal: string | null;
             /** Valor Venda */
             valor_venda: string | null;
-            /** Responsavel Id */
-            responsavel_id: number;
             unidade: components["schemas"]["UnidadeRead"];
             /**
              * Foto Capa
@@ -1290,6 +1377,23 @@ export interface components {
          * @description Full listing detail: adds the unit's photo gallery and amenities.
          */
         ImovelDetail: {
+            /** @description The unit's exact address. Null for callers who are neither staff nor the listing's responsible user. */
+            endereco?: components["schemas"]["EnderecoRead"] | null;
+            /**
+             * Codigo
+             * @description Internal code issued by Chaves. Null when the listing has none or the caller is neither staff nor the listing's responsible user.
+             */
+            codigo?: string | null;
+            /**
+             * Responsavel Id
+             * @description The responsible user's id. Null for callers who are neither staff nor the listing's responsible user.
+             */
+            responsavel_id?: number | null;
+            /**
+             * Aprovado Por Id
+             * @description The id of the staff member who first approved the listing. Null when it was never approved or the caller is neither staff nor the listing's responsible user.
+             */
+            aprovado_por_id?: number | null;
             /** Id */
             id: number;
             /** Titulo */
@@ -1317,8 +1421,6 @@ export interface components {
             valor_total_mensal: string | null;
             /** Valor Venda */
             valor_venda: string | null;
-            /** Responsavel Id */
-            responsavel_id: number;
             unidade: components["schemas"]["UnidadeRead"];
             /**
              * Foto Capa
@@ -1334,8 +1436,6 @@ export interface components {
              * @description A customer-facing note; absent from search results.
              */
             observacoes?: string | null;
-            /** Aprovado Por Id */
-            aprovado_por_id: number | null;
             /** Fotos */
             fotos: components["schemas"]["ImovelFotoRead"][];
             /** Amenidades */
@@ -1457,6 +1557,76 @@ export interface components {
             /** Amenidade Ids */
             amenidade_ids?: number[];
         };
+        /** ImovelSubmissionDraft */
+        ImovelSubmissionDraft: {
+            /** Rua */
+            rua?: string | null;
+            /** Numero */
+            numero?: string | null;
+            /** Complemento */
+            complemento?: string | null;
+            /** Bairro */
+            bairro?: string | null;
+            /** Cidade */
+            cidade?: string | null;
+            /** Estado */
+            estado?: string | null;
+            /** Cep */
+            cep?: string | null;
+            /** Latitude */
+            latitude?: string | null;
+            /** Longitude */
+            longitude?: string | null;
+            /** Area Util M2 */
+            area_util_m2?: string | null;
+            /** Quartos */
+            quartos?: number | null;
+            /** Banheiros */
+            banheiros?: number | null;
+            /** Vagas Garagem */
+            vagas_garagem?: number | null;
+            /** @description Property type of the unit. Optional; when the unit is reused it is only filled in if the unit has none yet, never overwritten. */
+            tipo?: components["schemas"]["PropertyType"] | null;
+            /** Titulo */
+            titulo?: string | null;
+            /** Descricao */
+            descricao?: string | null;
+            /** Disponivel Aluguel */
+            disponivel_aluguel?: boolean | null;
+            /** Disponivel Venda */
+            disponivel_venda?: boolean | null;
+            /** Mobiliado */
+            mobiliado?: boolean | null;
+            /** Aceita Pets */
+            aceita_pets?: boolean | null;
+            /** Valor Aluguel */
+            valor_aluguel?: string | null;
+            /** Valor Condominio */
+            valor_condominio?: string | null;
+            /** Valor Iptu */
+            valor_iptu?: string | null;
+            /**
+             * Valor Seguro Incendio
+             * @description Optional; counted as 0 in `valor_total_mensal` when omitted.
+             */
+            valor_seguro_incendio?: string | null;
+            /** Valor Venda */
+            valor_venda?: string | null;
+            /**
+             * Codigo
+             * @description Internal code issued by Chaves. Stored trimmed and in uppercase (blank means none); unique among listings pending review or published.
+             */
+            codigo?: string | null;
+            /**
+             * Observacoes
+             * @description A customer-facing note, shown in the public listing detail.
+             */
+            observacoes?: string | null;
+            /** Foto Urls */
+            foto_urls?: string[] | null;
+            /** Amenidade Ids */
+            amenidade_ids?: number[] | null;
+        };
         /**
          * ImovelSummary
          * @description A listing as it appears in search results and favorites.
@@ -1489,8 +1659,6 @@ export interface components {
             valor_total_mensal: string | null;
             /** Valor Venda */
             valor_venda: string | null;
-            /** Responsavel Id */
-            responsavel_id: number;
             unidade: components["schemas"]["UnidadeRead"];
             /**
              * Foto Capa
@@ -1499,6 +1667,56 @@ export interface components {
             foto_capa: string | null;
             /** @description The broker (corretor) handling this listing commercially, independent of the responsible user or approving staff member; null when none is assigned. */
             corretor?: components["schemas"]["CorretorRef"] | null;
+        };
+        /**
+         * InterpretationRequest
+         * @description The pasted message. Its maximum length is `Settings.interpretation_max_chars`,
+         *     checked by the route (a configurable limit cannot be a static schema constraint).
+         */
+        InterpretationRequest: {
+            /**
+             * Texto
+             * @description The listing message exactly as received (e.g. from WhatsApp).
+             */
+            texto: string;
+        };
+        /**
+         * InterpretationResponse
+         * @description A proposal to review and correct; nothing was saved. The front end sends
+         *     `imovel`, corrected, to `POST /imoveis`.
+         */
+        InterpretationResponse: {
+            /** @description The registration payload's own fields, all optional and unconstrained. A value listed in `campos_invalidos` is kept here so the reviewer can fix it. */
+            imovel: components["schemas"]["ImovelSubmissionDraft"];
+            /**
+             * Campos Ausentes
+             * @description Registration fields the text did not give (required by `POST /imoveis`, including what the pricing rule still needs).
+             */
+            campos_ausentes: string[];
+            /**
+             * Campos Invalidos
+             * @description Fields present in `imovel` that `POST /imoveis` would reject as they are.
+             */
+            campos_invalidos: string[];
+            /** Avisos */
+            avisos: components["schemas"]["Aviso"][];
+            /**
+             * Amenidades Nao Mapeadas
+             * @description Amenities of the text that match none of the catalog; kept in the description.
+             */
+            amenidades_nao_mapeadas: string[];
+            /** @description The registered condominium whose normalized name equals the one in the text; null otherwise. A unit is never linked to it by this route. */
+            condominio: components["schemas"]["CondominioRef"] | null;
+            /**
+             * Condominios Candidatos
+             * @description Registered condominiums that resemble the name in the text (never chosen).
+             */
+            condominios_candidatos: components["schemas"]["CondominioRef"][];
+            /**
+             * Nome Condominio No Texto
+             * @description The condominium name as the text writes it.
+             */
+            nome_condominio_no_texto: string | null;
         };
         /**
          * LeadCorretorRead
@@ -1611,6 +1829,8 @@ export interface components {
             data_hora: string;
             status: components["schemas"]["VisitaStatus"];
             unidade: components["schemas"]["VisitaUnidadeRef"];
+            /** @description The unit's full address, present only while the visit is `agendada` and the unit has a street and a number; null once it is cancelled or completed, and for a unit registered without a street or number. */
+            endereco: components["schemas"]["EnderecoRead"] | null;
             /** @description The unit's current published listing; null when it is no longer published. */
             imovel: components["schemas"]["VisitaImovelRef"] | null;
         };
@@ -1705,31 +1925,23 @@ export interface components {
         };
         /**
          * UnidadeRead
-         * @description The unit as every response carries it today. Street, number, postal code and
-         *     coordinates are nullable because a listing may be registered without them; removing
-         *     them from public responses is a separate step (listing-text-import group 2).
+         * @description The PUBLIC unit: where it is only by neighborhood, city and state.
+         *
+         *     It deliberately has no street, number, complement, postal code, coordinates or
+         *     owner identifier (listing-text-import design.md Decision 7). Privacy is by type,
+         *     not by `null`: with those fields absent from this model, a mapper cannot leak
+         *     them by forgetting to blank them. The exact address lives in `EnderecoRead`,
+         *     reachable only through a privileged mapper (`incluir_endereco`).
          */
         UnidadeRead: {
             /** Id */
             id: number;
-            /** Rua */
-            rua: string | null;
-            /** Numero */
-            numero: string | null;
-            /** Complemento */
-            complemento: string | null;
             /** Bairro */
             bairro: string;
             /** Cidade */
             cidade: string;
             /** Estado */
             estado: string;
-            /** Cep */
-            cep: string | null;
-            /** Latitude */
-            latitude: string | null;
-            /** Longitude */
-            longitude: string | null;
             /** Area Util M2 */
             area_util_m2: string;
             /** Quartos */
@@ -1740,8 +1952,6 @@ export interface components {
             vagas_garagem: number;
             /** @description Property type; null when the unit has none registered yet. */
             tipo: components["schemas"]["PropertyType"] | null;
-            /** Proprietario Id */
-            proprietario_id: number;
         };
         /** UserRead */
         UserRead: {
@@ -1850,7 +2060,7 @@ export interface components {
              * @description The staff's note on the slot.
              */
             observacoes: string | null;
-            unidade: components["schemas"]["VisitaUnidadeRef"];
+            unidade: components["schemas"]["VisitaUnidadeStaffRef"];
             /** @description The unit's current published listing; null when there is none. */
             imovel: components["schemas"]["VisitaImovelRef"] | null;
             /** @description Null while the slot is not booked. */
@@ -1867,23 +2077,39 @@ export interface components {
         VisitaStatus: "disponivel" | "agendada" | "concluida" | "cancelada";
         /**
          * VisitaUnidadeRef
-         * @description The address of the physical unit a visit is on.
+         * @description Where the physical unit a visit is on is, as far as the visitor may know:
+         *     neighborhood, city and state. The exact address is `MinhaVisitaRead.endereco`.
          */
         VisitaUnidadeRef: {
             /** Id */
             id: number;
-            /** Rua */
-            rua: string | null;
-            /** Numero */
-            numero: string | null;
-            /** Complemento */
-            complemento: string | null;
             /** Bairro */
             bairro: string;
             /** Cidade */
             cidade: string;
             /** Estado */
             estado: string;
+        };
+        /**
+         * VisitaUnidadeStaffRef
+         * @description The unit as staff see it on a visit: with the street, number and complement
+         *     (null for a unit registered without them), always, whatever the visit's status.
+         */
+        VisitaUnidadeStaffRef: {
+            /** Id */
+            id: number;
+            /** Bairro */
+            bairro: string;
+            /** Cidade */
+            cidade: string;
+            /** Estado */
+            estado: string;
+            /** Rua */
+            rua: string | null;
+            /** Numero */
+            numero: string | null;
+            /** Complemento */
+            complemento: string | null;
         };
         /** VisitanteRef */
         VisitanteRef: {
@@ -2474,7 +2700,7 @@ export interface operations {
     search_imoveis_get: {
         parameters: {
             query?: {
-                /** @description Free text. Every word must appear (case-insensitive, accent-sensitive) in the title, description, street, neighborhood, city or condominium name. */
+                /** @description Free text. Every word must appear (case-insensitive, accent-sensitive) in the title, description, neighborhood, city or condominium name. The street is never searched. */
                 q?: string | null;
                 bairro?: string | null;
                 cidade?: string | null;
@@ -3037,7 +3263,7 @@ export interface operations {
                 corretor_id?: number | null;
                 /** @description Only listings with no assigned broker. Cannot be combined with `corretor_id`. */
                 sem_corretor?: boolean;
-                /** @description Free text, by the same rule as the public search: every word must appear (case-insensitive, accent-sensitive) in the title, description, street, neighborhood, city or condominium name. */
+                /** @description Free text, by the same rule as the public search: every word must appear (case-insensitive, accent-sensitive) in the title, description, neighborhood, city or condominium name. The street is never searched. */
                 q?: string | null;
                 disponivel_aluguel?: boolean | null;
                 disponivel_venda?: boolean | null;
@@ -3101,6 +3327,86 @@ export interface operations {
             };
             /** @description Unexpected server error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    interpret_text_admin_imoveis_interpretar_texto_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InterpretationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InterpretationResponse"];
+                };
+            };
+            /** @description Missing or invalid credentials */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Staff privileges required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The text is longer than the configured maximum, or holds no listing data */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    /** @description Seconds to wait before retrying (the exceeded limit's window length). */
+                    "Retry-After"?: number;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unexpected server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description The AI service could not read the text, or it is not configured here. Nothing else is affected: the manual registration keeps working */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };

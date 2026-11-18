@@ -30,7 +30,6 @@ import {
   describeImovelAcaoError,
 } from "@/lib/imovel-errors";
 import { formatDataHoraSalvador } from "@/lib/visita-labels";
-import type { ComEnderecoCodigo } from "@/lib/api/endereco";
 
 type ImovelAdmin = components["schemas"]["ImovelAdminRead"];
 
@@ -52,7 +51,7 @@ export function ImovelAdminLinha({ imovel }: { imovel: ImovelAdmin }) {
   const remover = useRemoverCorretorImovel(imovel.id);
 
   const { unidade } = imovel;
-  const codigo = (imovel as ImovelAdmin & ComEnderecoCodigo).codigo;
+  const { codigo } = imovel;
   const acoes = ACOES_ORDEM.filter(
     (acao) => imovel.acoes_permitidas.some((valor) => isAcaoConhecida(valor) && valor === acao),
   );

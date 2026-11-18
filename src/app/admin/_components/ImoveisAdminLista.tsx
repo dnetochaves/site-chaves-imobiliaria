@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,7 +64,12 @@ export function ImoveisAdminLista() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-text-primary text-lg font-semibold">Imóveis</h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-text-primary text-lg font-semibold">Imóveis</h2>
+        <Button asChild variant="outline" className="h-11 md:h-8">
+          <Link href="/admin/imoveis/importar">Cadastrar por texto</Link>
+        </Button>
+      </div>
 
       <div className="flex flex-wrap items-end gap-3">
         <div className="flex flex-col gap-1.5">

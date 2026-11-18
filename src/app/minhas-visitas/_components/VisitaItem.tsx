@@ -12,18 +12,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useCancelarVisita } from "@/lib/api/hooks/use-cancelar-visita";
-import {
-  formatEnderecoLinha,
-  lerEndereco,
-  type ComEnderecoCodigo,
-} from "@/lib/api/endereco";
+import { formatEnderecoLinha } from "@/lib/api/endereco";
 import { describeCancelarError } from "@/lib/visita-errors";
 import {
   VISITA_STATUS_OPTIONS,
   formatDataHoraSalvador,
 } from "@/lib/visita-labels";
 
-type MinhaVisita = components["schemas"]["MinhaVisitaRead"] & ComEnderecoCodigo;
+type MinhaVisita = components["schemas"]["MinhaVisitaRead"];
 
 export function VisitaItem({ visita }: { visita: MinhaVisita }) {
   const [confirmando, setConfirmando] = useState(false);
@@ -34,7 +30,7 @@ export function VisitaItem({ visita }: { visita: MinhaVisita }) {
   // status (e quando o imóvel não tem endereço informado) o bloco não aparece.
   const agendada = visita.status === "agendada";
   const enderecoLinha = agendada
-    ? formatEnderecoLinha(lerEndereco({ endereco: visita.endereco, unidade }))
+    ? formatEnderecoLinha(visita.endereco)
     : null;
   const statusLabel =
     VISITA_STATUS_OPTIONS.find((option) => option.value === visita.status)

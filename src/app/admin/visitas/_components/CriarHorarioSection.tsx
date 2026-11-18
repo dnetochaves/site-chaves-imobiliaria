@@ -2,11 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  formatLocalizacaoCompleta,
-  lerEndereco,
-  type ComEnderecoCodigo,
-} from "@/lib/api/endereco";
+import { formatLocalizacaoCompleta } from "@/lib/api/endereco";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -130,13 +126,7 @@ function HorarioForm({ imovelId }: { imovelId: number }) {
           #{imovel.id} · {imovel.titulo}
         </p>
         <p className="text-text-secondary">
-          {formatLocalizacaoCompleta(
-            lerEndereco({
-              endereco: (imovel as ComEnderecoCodigo).endereco,
-              unidade,
-            }),
-            unidade,
-          )}
+          {formatLocalizacaoCompleta(imovel.endereco, unidade)}
         </p>
       </div>
 

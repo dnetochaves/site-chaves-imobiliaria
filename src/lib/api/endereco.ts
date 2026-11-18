@@ -1,52 +1,10 @@
-/**
- * Endereço completo e código interno: só chegam à equipe, ao responsável pelo
- * anúncio e ao visitante com visita agendada. O OpenAPI de produção ainda é o
- * anterior à privacidade do endereço, então estes tipos são locais — trocar
- * pelos gerados depois do deploy do back-end (ver design.md de
- * hide-public-address).
- */
-export type Endereco = {
-  rua?: string | null;
-  numero?: string | null;
-  complemento?: string | null;
-  cep?: string | null;
-  latitude?: number | string | null;
-  longitude?: number | string | null;
-};
-
-/** Campos opcionais que o back-end novo acrescenta ao detalhe e às listas de equipe. */
-export type ComEnderecoCodigo = {
-  endereco?: Endereco | null;
-  codigo?: string | null;
-};
-
-type UnidadeLegada = Endereco;
+import type { components } from "@/lib/api/generated/schema";
 
 /**
- * Lê o endereço de `endereco` quando a API é a nova (`null` = sem permissão ou
- * não informado). Com a API antiga o campo não existe (`undefined`) e o endereço
- * ainda vem em `unidade` — o fallback só existe para a transição e só deve ser
- * usado em telas de equipe/responsável/visita agendada.
+ * Endereço exato: só chega à equipe, ao responsável pelo anúncio e ao visitante
+ * com visita agendada. Toda parte pode ser nula (imóvel cadastrado sem rua).
  */
-export function lerEndereco(fonte: {
-  endereco?: Endereco | null;
-  unidade?: UnidadeLegada | null;
-}): Endereco | null {
-  if (fonte.endereco !== undefined) return fonte.endereco;
-  const u = fonte.unidade;
-  if (!u) return null;
-  const temAlgo = [u.rua, u.numero, u.complemento, u.cep].some(Boolean);
-  return temAlgo
-    ? {
-        rua: u.rua,
-        numero: u.numero,
-        complemento: u.complemento,
-        cep: u.cep,
-        latitude: u.latitude,
-        longitude: u.longitude,
-      }
-    : null;
-}
+export type Endereco = components["schemas"]["EnderecoRead"];
 
 function texto(valor: string | null | undefined): string {
   return (valor ?? "").trim();
